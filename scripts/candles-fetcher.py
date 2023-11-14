@@ -42,7 +42,7 @@ def generate_monthly_date_pairs(start_date, end_date):
     return date_pairs
 
 def fetchCandlesData(symbols):
-    pairs = [(1262304000, 1699574400)]
+    pairs = [(1262304000, 1735689600)]
     data = {}
     for symbol in symbols:
         data[symbol['symbol']['S']] = {}
@@ -53,10 +53,17 @@ def fetchCandlesData(symbols):
         data[symbol['symbol']['S']]['c'] = []
         data[symbol['symbol']['S']]['v'] = []
         for s, e in pairs:
-            time.sleep(1)
+            time.sleep(10)
             print(f"Fetching data for symbol {symbol['symbol']['S']} from {s} to {e}")
             finnhub_client = finnhub.Client(api_key="cl2a54hr01qinfqol99gcl2a54hr01qinfqol9a0")
-            response = finnhub_client.crypto_candles(symbol['exchangeSymbol']['S'], 'D', s, e)
+            gotData = False
+            retries = 3
+            while gotData == False and retries != 0:
+                response = finnhub_client.crypto_candles(symbol['exchangeSymbol']['S'], 'D', s, e)
+                if 't' in response and len(response['t']) != 0:
+                    break
+                retries = retries - 1
+                time.sleep(10)
             if response['s'] == 'no_data':
                 continue
             data[symbol['symbol']['S']]['t'].extend(response['t'])
@@ -71,24 +78,12 @@ def fetchCandlesData(symbols):
 def writeData(data):
     formattedData = {}
     for key, value in data.items():
-        formattedData[key] = []
-        for index, v in enumerate(value['t']):
-            symbolData = {
-                't': str(value['t'][index]),
-                'o': value['o'][index],
-                'h': value['h'][index],
-                'l': value['l'][index],
-                'c': value['c'][index],
-                'v': value['v'][index]
-            }
-            formattedData[key].append(symbolData)
         home = os.path.expanduser("~")
         path = os.path.join(home, 'IndicatorTester/candles')
         if not os.path.exists(path):
             os.makedirs(path)
         with open(f"{path}/{key}.json", 'w') as json_file:
-            json.dump(formattedData[key], json_file)
-    formattedData = {}
+            json.dump(value, json_file)
 
 def main():
     symbols = getSupportedSymbols()
