@@ -9,6 +9,7 @@ sys.path.append(project_directory)
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from datetime import datetime
 from IndicatorCalculator.Indicators import *
 from CandlesManager.CandlesProvider import CandlesProvider
 
@@ -45,8 +46,8 @@ async def calculate(calculate: Calculate):
             stocks = 0
 
     return {
-        'start': data['t'][0],
-        'end': data['t'][-1],
+        'start': datetime.utcfromtimestamp(data['t'][0]).strftime('%d/%b/%Y'),
+        'end': datetime.utcfromtimestamp(data['t'][-1]).strftime('%d/%b/%Y'),
         'cash': cash
     }
 
