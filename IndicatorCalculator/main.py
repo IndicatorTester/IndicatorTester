@@ -1,17 +1,21 @@
 # To set the project directory
 import os
 import sys
+import re
 
 current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
 from IndicatorCalculator.Indicators import *
 from CandlesManager.CandlesProvider import CandlesProvider
+
+# Constants
+INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>= ]+$'
 
 # Define the needed objects
 app = FastAPI()
@@ -25,6 +29,9 @@ class Calculate(BaseModel):
 # followed the indicator starting with $1000 cash
 @app.post('/calculate')
 async def calculate(calculate: Calculate):
+    if not re.match(INDICATOR_PATTERN, calculate.indicator):
+        raise HTTPException(status_code = 403, detail = 'Invalid indicator')
+
     data = candlesProvider.getCandles(calculate.symbol)
     time, open, high, low, close = data['t'], data['o'], data['h'], data['l'], data['c']
     buySellSignals = eval(calculate.indicator)
