@@ -1,5 +1,7 @@
 import pandas as pd
 
 # Exponential Moving Average
-def ema(prices, span):
-    return pd.Series(prices).ewm(span = span, adjust = False).mean()
+def ema(data: pd.DataFrame, span):
+    return data.ewm(span = span, adjust = False).mean()
+
+# ema(OPEN, 10) > ema(CLOSE, 50)

@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Returns RSI values
-def rsi(close, periods = 14):    
-    close_delta = pd.Series(close).diff()
+def rsi(data: pd.DataFrame, periods = 14):    
+    close_delta = data.diff()
 
     # Make two series: one for lower closes and one for higher closes
     up = close_delta.clip(lower=0)

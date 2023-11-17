@@ -8,9 +8,9 @@ project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
 import uvicorn
+import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from datetime import datetime
 from IndicatorCalculator.Indicators import *
 from CandlesManager.CandlesProvider import CandlesProvider
 
@@ -33,7 +33,9 @@ async def calculate(calculate: Calculate):
         raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
     data = candlesProvider.getCandles(calculate.symbol)
-    time, open, high, low, close = data['t'], data['o'], data['h'], data['l'], data['c']
+    date = data.copy()['Date']
+    open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
+    data = data.copy()
     buySellSignals = eval(calculate.indicator)
 
     cash, stocks, preSignal, startSignal = 1000.0, 0, False, next((i for i, value in enumerate(buySellSignals) if value), None)
@@ -53,8 +55,8 @@ async def calculate(calculate: Calculate):
             stocks = 0
 
     return {
-        'start': datetime.utcfromtimestamp(data['t'][0]).strftime('%d/%b/%Y'),
-        'end': datetime.utcfromtimestamp(data['t'][-1]).strftime('%d/%b/%Y'),
+        'start': date.tolist()[0],
+        'end': date.tolist()[-1],
         'cash': cash
     }
 
