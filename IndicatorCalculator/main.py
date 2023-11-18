@@ -34,7 +34,7 @@ async def calculate(calculate: Calculate):
         raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
     data = candlesProvider.getCandles(calculate.symbol, calculate.startDate, calculate.endDate)
-    fdata = data.copy()
+    mdata = data.copy()
     date = data.copy()['Date']
     open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
     buySellSignals = eval(calculate.indicator)

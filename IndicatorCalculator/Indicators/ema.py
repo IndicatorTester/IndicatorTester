@@ -4,4 +4,4 @@ import pandas as pd
 def ema(data: pd.DataFrame, span):
     return data.ewm(span = span, adjust = False).mean()
 
-# ema(OPEN, 10) > ema(CLOSE, 50)
+# ema(OPEN, 5) > ema(CLOSE, 25)
