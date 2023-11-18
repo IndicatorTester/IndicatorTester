@@ -8,7 +8,6 @@ project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
 import uvicorn
-import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from IndicatorCalculator.Indicators import *
@@ -35,12 +34,14 @@ async def calculate(calculate: Calculate):
         raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
     data = candlesProvider.getCandles(calculate.symbol, calculate.startDate, calculate.endDate)
+    fdata = data.copy()
     date = data.copy()['Date']
     open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
-    data = data.copy()
     buySellSignals = eval(calculate.indicator)
 
     cash, stocks, preSignal, startSignal = 1000.0, 0, False, next((i for i, value in enumerate(buySellSignals) if value), None)
+
+    actions = []
 
     if startSignal is not None:
         for index, signal in enumerate(buySellSignals[startSignal:]):
@@ -48,9 +49,23 @@ async def calculate(calculate: Calculate):
                 if signal:
                     stocks = cash / close[index]
                     cash = 0
+                    actions.append({
+                        'date': date[index],
+                        'price': close[index],
+                        'action': 'buy',
+                        'stocks': stocks,
+                        'cach': cash
+                    })
                 else:
                     cash = stocks * close[index]
                     stocks = 0
+                    actions.append({
+                        'date': date[index],
+                        'price': close[index],
+                        'action': 'sell',
+                        'stocks': stocks,
+                        'cach': cash
+                    })
                 preSignal = signal
         if preSignal:
             cash = stocks * close[index]
@@ -59,7 +74,8 @@ async def calculate(calculate: Calculate):
     return {
         'start': date.tolist()[0],
         'end': date.tolist()[-1],
-        'cash': cash
+        'cash': cash,
+        'actions': actions
     }
 
 # Run FastApi server when executing this file
