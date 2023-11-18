@@ -10,7 +10,7 @@ sys.path.append(project_directory)
 import uvicorn
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from IndicatorCalculator.Indicators import *
 from CandlesManager.CandlesProvider import CandlesProvider
 
@@ -24,6 +24,8 @@ candlesProvider = CandlesProvider()
 class Calculate(BaseModel):
     symbol: str
     indicator: str
+    startDate: str = Field('2000-01-01')
+    endDate: str = Field('2029-12-31')
 
 # Calculate endpoint which calculate the given indicator on the given symbol and finds the current amount of money if the user
 # followed the indicator starting with $1000 cash
@@ -32,7 +34,7 @@ async def calculate(calculate: Calculate):
     if not re.match(INDICATOR_PATTERN, calculate.indicator):
         raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
-    data = candlesProvider.getCandles(calculate.symbol)
+    data = candlesProvider.getCandles(calculate.symbol, calculate.startDate, calculate.endDate)
     date = data.copy()['Date']
     open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
     data = data.copy()
