@@ -5,3 +5,6 @@ from .BOLD import bold
 from .RSI import rsi
 from .SOK import sok
 from .SOD import sod
+from .MACD import macd
+from .MACDH import macdh
+from .MACDS import macds
