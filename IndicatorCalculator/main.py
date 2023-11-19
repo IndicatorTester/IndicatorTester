@@ -23,6 +23,7 @@ candlesProvider = CandlesProvider()
 class Calculate(BaseModel):
     symbol: str
     indicator: str
+    cash: float = Field(1000.0)
     startDate: str = Field('2000-01-01')
     endDate: str = Field('2029-12-31')
 
@@ -39,7 +40,7 @@ async def calculate(calculate: Calculate):
     open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
     buySellSignals = eval(calculate.indicator)
 
-    cash, stocks, preSignal, startSignal = 1000.0, 0, False, next((i for i, value in enumerate(buySellSignals) if value), None)
+    cash, stocks, preSignal, startSignal = calculate.cash, 0, False, next((i for i, value in enumerate(buySellSignals) if value), None)
 
     actions = []
 
