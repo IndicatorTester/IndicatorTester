@@ -37,6 +37,7 @@ async def calculate(calculate: Calculate):
     data = candlesProvider.getCandles(calculate.symbol, calculate.startDate, calculate.endDate)
     mdata = data.copy()
     date = data.copy()['Date']
+    volume = data.copy()['Volume']
     open, high, low, close = data.copy()['Open'], data.copy()['High'], data.copy()['Low'], data.copy()['Close']
     buySellSignals = eval(calculate.indicator)
 
