@@ -14,7 +14,7 @@ from IndicatorCalculator.Indicators import *
 from CandlesManager.CandlesProvider import CandlesProvider
 
 # Constants
-INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>= ]+$'
+INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=. ]+$'
 
 # Define the needed objects
 app = FastAPI()
