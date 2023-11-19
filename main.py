@@ -10,7 +10,6 @@ sys.path.append(project_directory)
 
 from activities.CalculateActivity import *
 
-# Define the needed objects
 app = FastAPI()
 calculateActivity = CalculateActivity()
 
@@ -18,6 +17,5 @@ calculateActivity = CalculateActivity()
 async def calculate(request: CalculateRequest):
     return calculateActivity.act(request)
 
-# Run FastApi server when executing this file
 if __name__ == "__main__":
     uvicorn.run("main:app", port=3010, reload=True)
