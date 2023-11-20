@@ -1,8 +1,17 @@
 import os
-import boto3
+import sys
 import time
 import yfinance as yf
 import pandas as pd
+
+current_script_path = os.path.abspath(__file__)
+project_directory = os.path.dirname(os.path.dirname(current_script_path))
+sys.path.append(project_directory)
+
+import clients
+import constants
+
+awsClient = clients.AwsClient()
 
 class CandlesFetcher:
     @classmethod
@@ -19,7 +28,7 @@ class CandlesFetcher:
                 file.write(pd.DataFrame(data).to_csv())
 
     def _getSupportedSymbols():
-        dynamodb = boto3.client('dynamodb', region_name='eu-west-1')
+        dynamodb = awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         tableName = 'CryptoSymbols'
         try:
             items = []

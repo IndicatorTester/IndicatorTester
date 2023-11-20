@@ -1,4 +1,3 @@
-# To set the project directory
 import os
 import sys
 import uvicorn
@@ -8,13 +7,14 @@ current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
-from activities.CalculateActivity import *
+import activities
+import models
 
 app = FastAPI()
-calculateActivity = CalculateActivity()
+calculateActivity = activities.CalculateActivity()
 
 @app.post('/calculate')
-async def calculate(request: CalculateRequest):
+async def calculate(request: models.CalculateRequest):
     return calculateActivity.act(request)
 
 if __name__ == "__main__":
