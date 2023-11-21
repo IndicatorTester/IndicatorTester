@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
@@ -24,12 +25,9 @@ class SymbolsAdder:
             awsUtils.addToDynamoDB(dynamodb, constants.AwsConstants.SYMBOLS_TABLE.value, symbolData)
 
     def _getNewSymbols():
-        return [{
-            'symbol': 'GOOGL',
-            'name': 'Alphabet Inc.',
-            'apiSymbol': 'GOOG',
-            'exchange': 'NASDAQ'
-        }]
+        with open('./play/output.json') as f:
+            data = json.load(f)
+        return data
 
 if __name__ == "__main__":
     SymbolsAdder().add()

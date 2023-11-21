@@ -1,4 +1,4 @@
-import json
+
 
 class AwsUtils:
     @classmethod
@@ -9,7 +9,7 @@ class AwsUtils:
             while not scan_complete:
                 response = dynamodb.scan(TableName = table)
                 if 'Items' in response:
-                    items.extend(cls._itemsToJson(response['Items']))
+                    items.extend(cls._itemsToJson(cls, response['Items']))
                 if 'LastEvaluatedKey' in response:
                     last_key = response['LastEvaluatedKey']
                     response = dynamodb.scan(TableName = table, ExclusiveStartKe = last_key)
@@ -34,10 +34,18 @@ class AwsUtils:
             Item = cls._toDynamoItem(item)
         )
 
-    def _itemsToJson(items):
+    def _itemsToJson(cls, items):
         jsonItems = []
         for item in items:
-            jsonItems.append(json.dump(item))
+            for key in item.keys():
+                if isinstance(item[key], dict) and 'S' in item[key]:
+                    item[key] = item[key]['S']
+                elif isinstance(item[key], dict) and 'N' in item[key]:
+                    item[key] = item[key]['N']
+                elif isinstance(item[key], list):
+                    item[key] = [cls._itemsToJson(i) if isinstance(i, dict) else i for i in item[key]]
+            jsonItems.append(item)
+        return jsonItems
 
     def _toDynamoItem(json_record):
         item = {}
