@@ -7,7 +7,9 @@ candlesProvider = CandlesProvider()
 class CalculateHandler:
     @classmethod
     def handle(cls, request: CalculateRequest):
-        data = candlesProvider.getCandles(request.symbol, request.startDate, request.endDate)
+        data = candlesProvider.getCandles(request.exchange, request.interval, request.symbol)
+        data['Date'] = pd.to_datetime(data['Date'])
+        data = data.set_index('Date').loc[request.startDate : request.endDate].reset_index()
 
         (date, open, high, low, close, volume) = (
             data['Date'],

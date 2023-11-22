@@ -42,6 +42,11 @@ class AwsUtils:
         df.to_csv(csvBuffer)
         s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
 
+    @classmethod
+    def getDataFrameFromS3(cls, s3, path) -> pd.DataFrame:
+        s3Object = s3.get_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path)
+        return pd.read_csv(s3Object['Body'])
+
     def _itemsToJson(cls, items):
         jsonItems = []
         for item in items:

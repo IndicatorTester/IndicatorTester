@@ -12,6 +12,10 @@ calculateHandler = CalculateHandler()
 class CalculateActivity:
     @classmethod
     def act(cls, request: CalculateRequest):
+        if request.exchange is None:
+            raise HTTPException(status_code = 403, detail = 'Exchange can\'t be null')
+        if request.interval is None:
+            raise HTTPException(status_code = 403, detail = 'Interval can\'t be null')
         if request.symbol is None:
             raise HTTPException(status_code = 403, detail = 'Symbol can\'t be null')
         if request.indicator is None:

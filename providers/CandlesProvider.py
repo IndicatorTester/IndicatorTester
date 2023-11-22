@@ -1,12 +1,22 @@
 import pandas as pd
-from os.path import expanduser
+import clients
+import constants
+import utils
+
+awsClient = clients.AwsClient()
+aswUtils = utils.AwsUtils()
 
 class CandlesProvider:
+
+    cache = {}
+
     @classmethod
-    def getCandles(cls, symbol, startDate, endDate) -> pd.DataFrame:
-        dataFilePath =  expanduser(f"~/IndicatorTester/candles/{symbol}.csv")
-        with open(dataFilePath, 'r') as file:
-            data = pd.read_csv(file)
-        data['Date'] = pd.to_datetime(data['Date'])
-        selectedData = data.set_index('Date').loc[startDate:endDate].reset_index()
-        return selectedData
+    def getCandles(cls, exchange, interval, symbol) -> pd.DataFrame:
+        path = f"{exchange}/{interval}/{symbol}.csv"
+        if path in cls.cache:
+            return cls.cache[path]
+
+        s3 = awsClient.get_client(constants.AwsConstants.S3.value)
+        candles = aswUtils.getDataFrameFromS3(s3, path)
+        cls.cache[path] = candles
+        return candles
