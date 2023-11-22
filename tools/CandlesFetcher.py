@@ -18,17 +18,18 @@ awsUtils = utils.AwsUtils()
 class CandlesFetcher:
     @classmethod
     def fetch(cls):
+        s3 = awsClient.get_client(constants.AwsConstants.S3.value)
         dynamodb = awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         symbols = awsUtils.getDynamoTable(dynamodb, constants.AwsConstants.SYMBOLS_TABLE.value)
         for symbol in symbols:
+            data = yf.download(
+                symbol['apiSymbol'],
+                start = constants.CandlesConstants.CANDLES_ABS_START_DATE.value,
+                end = constants.CandlesConstants.CANDLES_ABS_END_DATE.value
+            )
+            path = f"{symbol['exchange']}/{constants.CandlesConstants.ONE_DAY_INTERVAL.value}/{symbol['symbol']}.csv"
+            awsUtils.writeDataFrameToS3(s3, path, pd.DataFrame(data))
             time.sleep(30)
-            data = yf.download(symbol['apiSymbol'], start="2000-01-01", end="2025-01-01")
-            home = os.path.expanduser("~")
-            path = os.path.join(home, 'IndicatorTester/candles')
-            if not os.path.exists(path):
-                os.makedirs(path)
-            with open(f"{path}/{symbol['symbol']}.csv", 'w') as file:
-                file.write(pd.DataFrame(data).to_csv())
 
 if __name__ == "__main__":
     CandlesFetcher().fetch()

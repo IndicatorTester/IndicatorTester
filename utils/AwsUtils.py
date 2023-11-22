@@ -1,4 +1,6 @@
-
+from io import StringIO
+import pandas as pd
+import constants
 
 class AwsUtils:
     @classmethod
@@ -33,6 +35,12 @@ class AwsUtils:
             TableName = table,
             Item = cls._toDynamoItem(item)
         )
+
+    @classmethod
+    def writeDataFrameToS3(cls, s3, path, df: pd.DataFrame):
+        csvBuffer = StringIO()
+        df.to_csv(csvBuffer, index = False)
+        s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
 
     def _itemsToJson(cls, items):
         jsonItems = []
