@@ -41,7 +41,7 @@ class CalculateHandler:
                             'price': close[index],
                             'action': 'buy',
                             'stocks': stocks,
-                            'cach': cash
+                            'cash': cash
                         })
                     else:
                         cash = stocks * close[index]
@@ -51,7 +51,7 @@ class CalculateHandler:
                             'price': close[index],
                             'action': 'sell',
                             'stocks': stocks,
-                            'cach': cash
+                            'cash': cash
                         })
                     preSignal = signal
             if preSignal:
