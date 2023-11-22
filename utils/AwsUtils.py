@@ -39,7 +39,7 @@ class AwsUtils:
     @classmethod
     def writeDataFrameToS3(cls, s3, path, df: pd.DataFrame):
         csvBuffer = StringIO()
-        df.to_csv(csvBuffer, index = False)
+        df.to_csv(csvBuffer)
         s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
 
     def _itemsToJson(cls, items):
