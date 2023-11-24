@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
+from constants import CandlesConstants
 
 class CalculateRequest(BaseModel):
     symbol: str = Field(None)
     exchange: str = Field(None)
     indicator: str = Field(None)
     cash: float = Field(1000.0)
-    interval: str = Field('OneDay')
-    startDate: str = Field('2000-01-01')
-    endDate: str = Field('2029-12-31')
+    interval: str = Field(CandlesConstants.ONE_DAY_INTERVAL.value)
+    startDate: str = Field(CandlesConstants.CANDLES_ABS_START_DATE.value)
+    endDate: str = Field(CandlesConstants.CANDLES_ABS_END_DATE.value)
