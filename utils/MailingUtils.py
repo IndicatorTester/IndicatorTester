@@ -1,4 +1,3 @@
-import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -6,6 +5,11 @@ from email.header import Header
 import constants
 
 class MailingUtils:
+
+    @staticmethod
+    def instance():
+        return mailingUtils
+
     def sendCandlesFetcherReport(cls, body):
         message = MIMEMultipart()
         message['From'] = constants.MailingConstants.SENDER_EMAIL.value
@@ -26,3 +30,5 @@ class MailingUtils:
         server.starttls()
         server.login(constants.MailingConstants.SMTP_USER.value, constants.MailingConstants.SMTP_PASSWORD.value)
         return server
+
+mailingUtils = MailingUtils()

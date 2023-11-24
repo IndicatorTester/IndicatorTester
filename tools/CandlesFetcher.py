@@ -12,9 +12,9 @@ import clients
 import constants
 import utils
 
-awsClient = clients.AwsClient()
-awsUtils = utils.AwsUtils()
-mailingUtils = utils.MailingUtils()
+awsClient = clients.AwsClient.instance()
+awsUtils = utils.AwsUtils.instance()
+mailingUtils = utils.MailingUtils.instance()
 
 class CandlesFetcher:
     @classmethod
@@ -42,7 +42,7 @@ class CandlesFetcher:
         mailingUtils.sendCandlesFetcherReport(report)
 
     def _getSymbolReport(symbol, existingData, newData):
-        if len(existingData['Date']) >= len(newData['Date']):
+        if len(existingData['Close']) >= len(newData['Close']):
             return (False, 
                 f"<br><p><b>[WARNING] Current data size is larger than or equal to new data size for symbol: {symbol}</b></p><br>"
             )

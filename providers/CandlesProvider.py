@@ -3,20 +3,25 @@ import clients
 import constants
 import utils
 
-awsClient = clients.AwsClient()
-aswUtils = utils.AwsUtils()
-
 class CandlesProvider:
 
-    cache = {}
+    @staticmethod
+    def instance():
+        return candlesProvider
 
-    @classmethod
-    def getCandles(cls, exchange, interval, symbol) -> pd.DataFrame:
+    def __init__(self, awsClient: clients.AwsClient, awsUtils: utils.AwsUtils) -> None:
+        self._awsClient = awsClient
+        self._awsUtils = awsUtils
+        self._cache = {}
+
+    def getCandles(self, exchange, interval, symbol) -> pd.DataFrame:
         path = f"{exchange}/{interval}/{symbol}.csv"
-        if path in cls.cache:
-            return cls.cache[path]
+        if path in self._cache:
+            return self._cache[path]
 
-        s3 = awsClient.get_client(constants.AwsConstants.S3.value)
-        candles = aswUtils.getDataFrameFromS3(s3, path)
-        cls.cache[path] = candles
+        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
+        candles = self._awsUtils.getDataFrameFromS3(s3, path)
+        self._cache[path] = candles
         return candles
+
+candlesProvider = CandlesProvider(clients.AwsClient.instance(), utils.AwsUtils.instance())

@@ -5,13 +5,18 @@ from models.CalculateRequest import CalculateRequest
 
 INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=. ]+$'
 
-calculateHandler = CalculateHandler()
-
 # Calculate endpoint which calculate the given indicator on the given symbol and finds the current amount of money if the user
 # followed the indicator starting with X amount of cash
 class CalculateActivity:
-    @classmethod
-    def act(cls, request: CalculateRequest):
+
+    @staticmethod
+    def instance():
+        return calculateActivity
+
+    def __init__(self, handler: CalculateHandler) -> None:
+        self._handler = handler
+
+    def act(self, request: CalculateRequest):
         if request.exchange is None:
             raise HTTPException(status_code = 403, detail = 'Exchange can\'t be null')
         if request.interval is None:
@@ -26,8 +31,10 @@ class CalculateActivity:
             raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
         try:
-            return calculateHandler.handle(request)
+            return self._handler.handle(request)
         except NameError as ne:
             raise HTTPException(status_code = 403, detail = 'Unsupported indicator')
         except Exception as e:
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
+
+calculateActivity = CalculateActivity(CalculateHandler.instance())

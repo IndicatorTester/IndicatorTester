@@ -10,8 +10,8 @@ import clients
 import constants
 import utils
 
-awsClient = clients.AwsClient()
-awsUtils = utils.AwsUtils()
+awsClient = clients.AwsClient.instance()
+awsUtils = utils.AwsUtils.instance()
 
 class SymbolsAdder:
     @classmethod

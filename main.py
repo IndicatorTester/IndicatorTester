@@ -11,7 +11,7 @@ import activities
 import models
 
 app = FastAPI()
-calculateActivity = activities.CalculateActivity()
+calculateActivity = activities.CalculateActivity.instance()
 
 @app.post('/calculate')
 async def calculate(request: models.CalculateRequest):

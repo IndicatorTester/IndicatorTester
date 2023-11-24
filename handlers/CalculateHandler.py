@@ -2,12 +2,17 @@ from providers.CandlesProvider import CandlesProvider
 from Indicators import *
 from models.CalculateRequest import CalculateRequest
 
-candlesProvider = CandlesProvider()
-
 class CalculateHandler:
-    @classmethod
-    def handle(cls, request: CalculateRequest):
-        data = candlesProvider.getCandles(request.exchange, request.interval, request.symbol)
+
+    @staticmethod
+    def instance():
+        return calculateHandler
+
+    def __init__(self, candlesProvider: CandlesProvider) -> None:
+        self._candlesProvider = candlesProvider
+
+    def handle(self, request: CalculateRequest):
+        data = self._candlesProvider.getCandles(request.exchange, request.interval, request.symbol)
         data['Date'] = pd.to_datetime(data['Date'])
         data = data.set_index('Date').loc[request.startDate : request.endDate].reset_index()
 
@@ -65,3 +70,5 @@ class CalculateHandler:
             'actions': actions,
             'success': True
         }
+
+calculateHandler = CalculateHandler(CandlesProvider.instance())

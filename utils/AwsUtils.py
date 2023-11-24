@@ -3,15 +3,19 @@ import pandas as pd
 import constants
 
 class AwsUtils:
-    @classmethod
-    def getDynamoTable(cls, dynamodb, table):
+
+    @staticmethod
+    def instance():
+        return awsUtils
+
+    def getDynamoTable(self, dynamodb, table):
         try:
             items = []
             scan_complete = False
             while not scan_complete:
                 response = dynamodb.scan(TableName = table)
                 if 'Items' in response:
-                    items.extend(cls._itemsToJson(cls, response['Items']))
+                    items.extend(self._itemsToJson(response['Items']))
                 if 'LastEvaluatedKey' in response:
                     last_key = response['LastEvaluatedKey']
                     response = dynamodb.scan(TableName = table, ExclusiveStartKe = last_key)
@@ -21,33 +25,29 @@ class AwsUtils:
         except Exception as e:
             return []
 
-    @classmethod
-    def existInDynamo(cls, dynamodb, table, key):
+    def existInDynamo(self, dynamodb, table, key):
         response = dynamodb.get_item(
             TableName = table,
-            Key = cls._toDynamoItem(key)
+            Key = self._toDynamoItem(key)
         )
         return 'Item' in response
 
-    @classmethod
-    def addToDynamoDB(cls, dynamodb, table, item):
+    def addToDynamoDB(self, dynamodb, table, item):
         dynamodb.put_item(
             TableName = table,
-            Item = cls._toDynamoItem(item)
+            Item = self._toDynamoItem(item)
         )
 
-    @classmethod
-    def writeDataFrameToS3(cls, s3, path, df: pd.DataFrame):
+    def writeDataFrameToS3(self, s3, path, df: pd.DataFrame):
         csvBuffer = StringIO()
         df.to_csv(csvBuffer)
         s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
 
-    @classmethod
-    def getDataFrameFromS3(cls, s3, path) -> pd.DataFrame:
+    def getDataFrameFromS3(self, s3, path) -> pd.DataFrame:
         s3Object = s3.get_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path)
         return pd.read_csv(s3Object['Body'])
 
-    def _itemsToJson(cls, items):
+    def _itemsToJson(self, items):
         jsonItems = []
         for item in items:
             for key in item.keys():
@@ -56,7 +56,7 @@ class AwsUtils:
                 elif isinstance(item[key], dict) and 'N' in item[key]:
                     item[key] = item[key]['N']
                 elif isinstance(item[key], list):
-                    item[key] = [cls._itemsToJson(i) if isinstance(i, dict) else i for i in item[key]]
+                    item[key] = [self._itemsToJson(i) if isinstance(i, dict) else i for i in item[key]]
             jsonItems.append(item)
         return jsonItems
 
@@ -76,3 +76,5 @@ class AwsUtils:
                 item[key] = {'NULL': True}
 
         return item
+
+awsUtils = AwsUtils()
