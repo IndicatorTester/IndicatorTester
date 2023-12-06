@@ -42,7 +42,7 @@ class CalculateHandler:
                         stocks = cash / close[index]
                         cash = 0
                         actions.append({
-                            'date': date[index],
+                            'date': str(date[index]).split(' ')[0],
                             'price': close[index],
                             'action': 'buy',
                             'stocks': stocks,
@@ -52,7 +52,7 @@ class CalculateHandler:
                         cash = stocks * close[index]
                         stocks = 0
                         actions.append({
-                            'date': date[index],
+                            'date': str(date[index]).split(' ')[0],
                             'price': close[index],
                             'action': 'sell',
                             'stocks': stocks,
@@ -64,8 +64,8 @@ class CalculateHandler:
                 stocks = 0
 
         return {
-            'start': date.tolist()[0],
-            'end': date.tolist()[-1],
+            'start': str(date.tolist()[0]).split(' ')[0],
+            'end': str(date.tolist()[-1]).split(' ')[0],
             'cash': cash,
             'actions': actions,
             'success': True
