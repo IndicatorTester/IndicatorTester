@@ -26,10 +26,15 @@ app.add_middleware(
 )
 
 calculateActivity = activities.CalculateActivity.instance()
+getSymbolsActivity = activities.GetSymbolsActivity.instance()
 
 @app.post('/calculate')
 async def calculate(request: models.CalculateRequest):
     return calculateActivity.act(request)
+
+@app.get('/symbols')
+async def getSymbols():
+    return getSymbolsActivity.act()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=3010, reload=True)

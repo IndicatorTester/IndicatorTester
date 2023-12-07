@@ -4,5 +4,7 @@ class AwsConstants(Enum):
     DYNAMO_DB = 'dynamodb'
     SYMBOLS_TABLE = 'Symbols'
 
+    SYMBOLS_TABLE_EXCHANGE_FIELD = 'exchange'
+
     S3 = 's3'
     CANDLES_BUCKET = 'indicatortestercandles'
