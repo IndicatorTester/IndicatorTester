@@ -1,6 +1,4 @@
 import pandas as pd
-import clients
-import constants
 import utils
 
 class CandlesProvider:
@@ -9,8 +7,7 @@ class CandlesProvider:
     def instance():
         return candlesProvider
 
-    def __init__(self, awsClient: clients.AwsClient, awsUtils: utils.AwsUtils) -> None:
-        self._awsClient = awsClient
+    def __init__(self, awsUtils: utils.AwsUtils) -> None:
         self._awsUtils = awsUtils
         self._cache = {}
 
@@ -19,9 +16,8 @@ class CandlesProvider:
         if path in self._cache:
             return self._cache[path]
 
-        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
-        candles = self._awsUtils.getDataFrameFromS3(s3, path)
+        candles = self._awsUtils.getDataFrameFromS3(path)
         self._cache[path] = candles
         return candles
 
-candlesProvider = CandlesProvider(clients.AwsClient.instance(), utils.AwsUtils.instance())
+candlesProvider = CandlesProvider(utils.AwsUtils.instance())

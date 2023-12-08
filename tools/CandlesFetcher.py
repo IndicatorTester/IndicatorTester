@@ -8,11 +8,9 @@ current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
-import clients
 import constants
 import utils
 
-awsClient = clients.AwsClient.instance()
 awsUtils = utils.AwsUtils.instance()
 mailingUtils = utils.MailingUtils.instance()
 
@@ -20,9 +18,7 @@ class CandlesFetcher:
     @classmethod
     def fetch(cls):
         report = ''
-        s3 = awsClient.get_client(constants.AwsConstants.S3.value)
-        dynamodb = awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
-        symbols = awsUtils.getDynamoTable(dynamodb, constants.AwsConstants.SYMBOLS_TABLE.value)
+        symbols = awsUtils.getDynamoTable(constants.AwsConstants.SYMBOLS_TABLE.value)
         for symbol in symbols:
             time.sleep(30)
             data = yf.download(
@@ -31,14 +27,14 @@ class CandlesFetcher:
                 end = constants.CandlesConstants.CANDLES_ABS_END_DATE.value
             )
             path = f"{symbol['exchange']}/{constants.CandlesConstants.ONE_DAY_INTERVAL.value}/{symbol['symbol']}.csv"
-            existingData = awsUtils.getDataFrameFromS3(s3, path)
+            existingData = awsUtils.getDataFrameFromS3(path)
 
             symbolReport = cls._getSymbolReport(symbol['symbol'], existingData, pd.DataFrame(data).reset_index())
             report += symbolReport[1]
             if symbolReport[0] == False:
                 continue
 
-            awsUtils.writeDataFrameToS3(s3, path, pd.DataFrame(data).reset_index())
+            awsUtils.writeDataFrameToS3(path, pd.DataFrame(data).reset_index())
         mailingUtils.sendCandlesFetcherReport(report)
 
     def _getSymbolReport(symbol, existingData, newData):

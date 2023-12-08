@@ -1,5 +1,6 @@
 from io import StringIO
 import pandas as pd
+from clients.AwsClient import AwsClient
 import constants
 
 class AwsUtils:
@@ -8,8 +9,12 @@ class AwsUtils:
     def instance():
         return awsUtils
 
-    def getDynamoTable(self, dynamodb, table):
+    def __init__(self, awsClient: AwsClient) -> None:
+        self._awsClient = awsClient
+
+    def getDynamoTable(self, table):
         try:
+            dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
             items = []
             scan_complete = False
             while not scan_complete:
@@ -25,25 +30,29 @@ class AwsUtils:
         except Exception as e:
             return []
 
-    def existInDynamo(self, dynamodb, table, key):
+    def existInDynamo(self, table, key):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         response = dynamodb.get_item(
             TableName = table,
             Key = self._toDynamoItem(key)
         )
         return 'Item' in response
 
-    def addToDynamoDB(self, dynamodb, table, item):
+    def addToDynamoDB(self, table, item):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         dynamodb.put_item(
             TableName = table,
             Item = self._toDynamoItem(item)
         )
 
-    def writeDataFrameToS3(self, s3, path, df: pd.DataFrame):
+    def writeDataFrameToS3(self, path, df: pd.DataFrame):
+        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
         csvBuffer = StringIO()
         df.to_csv(csvBuffer)
         s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
 
-    def getDataFrameFromS3(self, s3, path) -> pd.DataFrame:
+    def getDataFrameFromS3(self, path) -> pd.DataFrame:
+        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
         s3Object = s3.get_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path)
         return pd.read_csv(s3Object['Body'])
 
@@ -77,4 +86,4 @@ class AwsUtils:
 
         return item
 
-awsUtils = AwsUtils()
+awsUtils = AwsUtils(AwsClient.instance())
