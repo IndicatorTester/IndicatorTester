@@ -30,6 +30,25 @@ class AwsUtils:
         except Exception as e:
             return []
 
+    def getDynamoItemsBySortKey(self, table, sortKey, sortKeyValue):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        items = []
+
+        scan_params = {
+            'TableName': table,
+            'FilterExpression': f'{sortKey} = :sk',
+            'ExpressionAttributeValues': {
+                ':sk': {'S': sortKeyValue},
+            },
+            'Limit': 200,
+        }
+
+        response = dynamodb.scan(**scan_params)
+        if 'Items' in response:
+            items.extend(self._itemsToJson(response['Items']))
+
+        return items
+
     def existInDynamo(self, table, key):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         response = dynamodb.get_item(

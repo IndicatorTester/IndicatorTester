@@ -38,6 +38,8 @@ class CalculateHandler:
         if startSignal is not None:
             for index, signal in enumerate(buySellSignals[startSignal:]):
                 if signal != preSignal:
+                    if close[index] == 0:
+                        continue
                     if signal:
                         stocks = cash / close[index]
                         cash = 0

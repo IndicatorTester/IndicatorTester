@@ -26,11 +26,17 @@ app.add_middleware(
 )
 
 calculateActivity = activities.CalculateActivity.instance()
+calculateExchangeActivity = activities.CalculateExchangeActivity.instance()
+
 getSymbolsActivity = activities.GetSymbolsActivity.instance()
 
 @app.post('/calculate')
 async def calculate(request: models.CalculateRequest):
     return calculateActivity.act(request)
+
+@app.post('/calculateExchange')
+async def calculate(request: models.CalculateExchangeRequest):
+    return calculateExchangeActivity.act(request)
 
 @app.get('/symbols')
 async def getSymbols():
