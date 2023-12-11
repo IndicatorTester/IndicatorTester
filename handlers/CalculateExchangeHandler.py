@@ -25,7 +25,6 @@ class CalculateExchangeHandler:
         response = []
         for symbolData in exchangeSymbols:
             try:
-                print(symbolData['symbol'])
                 response.append(self._calculateSymbol(symbolData['symbol'], request))
             except Exception as e:
                 response.append({

@@ -1,7 +1,7 @@
 import os
 import sys
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 current_script_path = os.path.abspath(__file__)
@@ -10,6 +10,7 @@ sys.path.append(project_directory)
 
 import activities
 import models
+import tools
 
 app = FastAPI()
 
@@ -25,22 +26,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-calculateActivity = activities.CalculateActivity.instance()
-calculateExchangeActivity = activities.CalculateExchangeActivity.instance()
-
-getSymbolsActivity = activities.GetSymbolsActivity.instance()
-
 @app.post('/calculate')
 async def calculate(request: models.CalculateRequest):
-    return calculateActivity.act(request)
+    return activities.CalculateActivity.instance().act(request)
 
 @app.post('/calculateExchange')
 async def calculate(request: models.CalculateExchangeRequest):
-    return calculateExchangeActivity.act(request)
+    return activities.CalculateExchangeActivity.instance().act(request)
 
 @app.get('/symbols')
 async def getSymbols():
-    return getSymbolsActivity.act()
+    return activities.GetSymbolsActivity.instance().act()
+
+TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
+
+@app.get('/ultimateCalculator')
+async def runUltimateCalculator(key: str = None):
+    if key != TOOLS_ACCESS_KEY:
+        raise HTTPException(status_code=403, detail='Access Denied')
+    return tools.UltimateCalculator.instance().run()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=3010, reload=True)
