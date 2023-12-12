@@ -1,18 +1,20 @@
 import os
 import sys
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 
+from utils.AuthUtils import AuthUtils
 import activities
 import models
 import tools
 
 app = FastAPI()
+authUtils = AuthUtils.instance()
 
 origins = [
     "http://localhost:3000",
@@ -26,16 +28,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+async def validateAccess(Auth: str = Header(None, convert_underscores=False)):
+    if not (await authUtils.isUserLoggedIn(Auth)):
+        raise HTTPException(status_code=403, detail='Access Denied')
+
 @app.post('/calculate')
-async def calculate(request: models.CalculateRequest):
+async def calculate(request: models.CalculateRequest, Auth: str = Depends(validateAccess)):
     return activities.CalculateActivity.instance().act(request)
 
 @app.post('/calculateExchange')
-async def calculate(request: models.CalculateExchangeRequest):
+async def calculate(request: models.CalculateExchangeRequest, Auth: str = Depends(validateAccess)):
     return activities.CalculateExchangeActivity.instance().act(request)
 
 @app.get('/symbols')
-async def getSymbols():
+async def getSymbols(Auth: str = Depends(validateAccess)):
     return activities.GetSymbolsActivity.instance().act()
 
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
