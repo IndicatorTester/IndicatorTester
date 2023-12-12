@@ -18,6 +18,7 @@ authUtils = AuthUtils.instance()
 
 origins = [
     "http://localhost:3000",
+    "https://www.xindicator.com"
 ]
 
 app.add_middleware(

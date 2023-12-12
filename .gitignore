@@ -1,3 +1,4 @@
 /play
 *.code-workspace
 .env
+requirements.txt
