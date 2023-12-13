@@ -1,4 +1,4 @@
-auth0_python
+auth0_python==3.24.1
 beautifulsoup4
 boto3
 fastapi
