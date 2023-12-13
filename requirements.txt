@@ -1,6 +1,6 @@
-auth0_python==4.7.0
+auth0_python
 beautifulsoup4==4.12.2
-boto3==1.33.13
+boto3
 fastapi==0.105.0
 numpy==1.26.2
 pandas==2.1.4
