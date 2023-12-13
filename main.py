@@ -3,6 +3,7 @@ import sys
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
 current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
@@ -29,6 +30,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get('/')
+async def health():
+    return {'message': 'healthy'}
+
 async def validateAccess(Auth: str = Header(None, convert_underscores=False)):
     if not (await authUtils.isUserLoggedIn(Auth)):
         raise HTTPException(status_code=403, detail='Access Denied')
@@ -54,4 +59,5 @@ async def runUltimateCalculator(key: str = None):
     return tools.UltimateCalculator.instance().run()
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=3010, reload=True)
+    load_dotenv()
+    uvicorn.run("main:app", host='0.0.0.0', port=3010, reload=os.getenv("DEBUG", False))
