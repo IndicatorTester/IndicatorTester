@@ -7,4 +7,4 @@ pandas
 pydantic
 python-dotenv
 uvicorn
-yfinance
+yfinance==0.2.28
