@@ -19,7 +19,7 @@ class UltimateCalculator:
         self._mailingUtils = mailingUtils
 
     def run(self):
-        cryptoSymbols = ['FIL-USD', 'RUNE-USD', 'XRP-USD', 'OP-USD']
+        cryptoSymbols = ['FIL-USD', 'RUNE-USD', 'XRP-USD', 'OP-USD', 'UNI-USD']
 
         signals = {}
         for symbol in cryptoSymbols:
