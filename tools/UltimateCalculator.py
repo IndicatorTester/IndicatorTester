@@ -19,22 +19,18 @@ class UltimateCalculator:
         self._mailingUtils = mailingUtils
 
     def run(self):
-        cryptoSymbolsData = self._awsUtils.getDynamoItemsBySortKey(
-            constants.AwsConstants.SYMBOLS_TABLE.value,
-            constants.AwsConstants.SYMBOLS_TABLE_EXCHANGE_FIELD.value,
-            CRYPTO_EXCHANGE
-        )
+        cryptoSymbols = ['FIL-USD', 'RUNE-USD', 'XRP-USD', 'OP-USD']
 
         signals = {}
-        for symbolData in cryptoSymbolsData:
+        for symbol in cryptoSymbols:
             time.sleep(15)
             historicalData = yf.download(
-                symbolData['apiSymbol'],
+                symbol,
                 start=constants.CandlesConstants.CANDLES_ABS_START_DATE.value,
                 end=constants.CandlesConstants.CANDLES_ABS_END_DATE.value
             )
             lastFiveSignals = self._getLastFiveSignals(historicalData)
-            signals[symbolData['symbol']] = lastFiveSignals
+            signals[symbol] = lastFiveSignals
 
         self._mailingUtils.sendUltimateCalculatorReport(signals)
 
