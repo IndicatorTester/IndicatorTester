@@ -17,14 +17,9 @@ import tools
 app = FastAPI()
 authUtils = AuthUtils.instance()
 
-origins = [
-    "http://localhost:3000",
-    "https://www.xindicator.com"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
