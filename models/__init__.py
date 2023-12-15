@@ -1,2 +1,1 @@
 from .CalculateRequest import CalculateRequest
-from .CalculateExchangeRequest import CalculateExchangeRequest

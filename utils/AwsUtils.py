@@ -64,17 +64,6 @@ class AwsUtils:
             Item = self._toDynamoItem(item)
         )
 
-    def writeDataFrameToS3(self, path, df: pd.DataFrame):
-        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
-        csvBuffer = StringIO()
-        df.to_csv(csvBuffer)
-        s3.put_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path, Body = csvBuffer.getvalue())
-
-    def getDataFrameFromS3(self, path) -> pd.DataFrame:
-        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
-        s3Object = s3.get_object(Bucket = constants.AwsConstants.CANDLES_BUCKET.value, Key = path)
-        return pd.read_csv(s3Object['Body'])
-
     def _itemsToJson(self, items):
         jsonItems = []
         for item in items:

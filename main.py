@@ -37,14 +37,6 @@ async def validateAccess(Auth: str = Header(None, convert_underscores=False)):
 async def calculate(request: models.CalculateRequest, Auth: str = Depends(validateAccess)):
     return activities.CalculateActivity.instance().act(request)
 
-@app.post('/calculateExchange')
-async def calculate(request: models.CalculateExchangeRequest, Auth: str = Depends(validateAccess)):
-    return activities.CalculateExchangeActivity.instance().act(request)
-
-@app.get('/symbols')
-async def getSymbols(Auth: str = Depends(validateAccess)):
-    return activities.GetSymbolsActivity.instance().act()
-
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
 
 @app.get('/ultimateCalculator')

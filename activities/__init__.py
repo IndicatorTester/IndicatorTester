@@ -1,3 +1,1 @@
 from .CalculateActivity import CalculateActivity
-from .GetSymbolsActivity import GetSymbolsActivity
-from .CalculateExchangeActivity import CalculateExchangeActivity

@@ -4,7 +4,6 @@ class MailingConstants(Enum):
     SENDER_EMAIL = 'secure-admin@indicatortester.com'
     RECEIVER_EMAIL = 'mustafaitju@gmail.com'
 
-    CANDLES_REPORT_EMAIL_SUBJECT = '[IndicatorTester] Candles Fetcher Report'
     ULTIMATE_CALCULATOR_REPORT_EMAIL_SUBJECT = '[XIndicator] ULTIMATE REPORT'
 
     SMTP_USER = 'AKIAR4LX2SAMBNX67IWY'
