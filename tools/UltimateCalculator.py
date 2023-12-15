@@ -5,7 +5,6 @@ import utils
 from Indicators import *
 import constants
 
-CRYPTO_EXCHANGE = 'CRYPTO'
 ULTIMATE_INDICATOR = 'sma(close, 5) > sma(open, 5)'
 
 class UltimateCalculator:

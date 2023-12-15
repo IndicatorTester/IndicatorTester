@@ -16,13 +16,12 @@ class CalculateHandler:
         data['Date'] = pd.to_datetime(data['Date'])
         data = data.set_index('Date').loc[request.startDate : request.endDate].reset_index()
 
-        (date, open, high, low, close, volume) = (
+        (date, open, high, low, close) = (
             data['Date'],
             data['Open'],
             data['High'],
             data['Low'],
-            data['Close'],
-            data['Volume']
+            data['Close']
         )
 
         buySellSignals = eval(request.indicator)
