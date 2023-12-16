@@ -2,6 +2,7 @@ import re
 from fastapi import HTTPException
 from handlers.CalculateHandler import CalculateHandler
 from models.CalculateRequest import CalculateRequest
+import logging
 
 INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=. ]+$'
 
@@ -33,8 +34,10 @@ class CalculateActivity:
         try:
             return self._handler.handle(request)
         except NameError as ne:
+            logging.error(f"NameError while processing /calculate", ne)
             raise HTTPException(status_code = 403, detail = 'Unsupported indicator')
         except Exception as e:
+            logging.error(f"Exception while processing /calculate", ne)
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
 
 calculateActivity = CalculateActivity(CalculateHandler.instance())

@@ -4,10 +4,12 @@ import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import logging
 
 current_script_path = os.path.abspath(__file__)
 project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
+logging.basicConfig(level=logging.INFO)
 
 from utils.AuthUtils import AuthUtils
 import activities

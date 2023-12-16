@@ -2,6 +2,7 @@ import os
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 from dotenv import load_dotenv
+import logging
 
 class AuthUtils:
 
@@ -22,9 +23,11 @@ class AuthUtils:
 
     async def isUserLoggedIn(self, userId: str) -> bool:
         try:
+            logging.info(f"Check user login for id: [{userId}]")
             user_info = self._auth0.users.get(userId)
             return user_info != None
         except Exception as e:
+            logging.error(f"Error while checking user login for id: [{userId}]", e)
             return False
 
 authUtils = AuthUtils()
