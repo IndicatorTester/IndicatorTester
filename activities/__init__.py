@@ -1,1 +1,2 @@
 from .CalculateActivity import CalculateActivity
+from .UpdateUserActivity import UpdateUserActivity

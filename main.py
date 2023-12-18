@@ -39,6 +39,10 @@ async def validateAccess(Auth: str = Header(None, convert_underscores=False)):
 async def calculate(request: models.CalculateRequest, Auth: str = Depends(validateAccess)):
     return activities.CalculateActivity.instance().act(request)
 
+@app.put('/user')
+async def calculate(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
+    return activities.UpdateUserActivity.instance().act(request)
+
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
 
 @app.get('/ultimateCalculator')
