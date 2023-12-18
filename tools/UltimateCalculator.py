@@ -1,9 +1,9 @@
 import time
-import yfinance as yf
 import pandas as pd
+from models import CalculateRequest
+from providers.CandlesProvider import CandlesProvider
 import utils
 from Indicators import *
-import constants
 
 ULTIMATE_INDICATOR = 'sma(close, 5) > sma(open, 5)'
 
@@ -13,21 +13,24 @@ class UltimateCalculator:
     def instance():
         return ultimateCalculator
 
-    def __init__(self, awsUtils: utils.AwsUtils, mailingUtils: utils.MailingUtils) -> None:
-        self._awsUtils = awsUtils
-        self._mailingUtils = mailingUtils
+    def __init__(self) -> None:
+        self._candlesProvider = CandlesProvider.instance()
+        self._mailingUtils = utils.MailingUtils.instance()
 
     def run(self):
-        cryptoSymbols = ['FIL-USD', 'RUNE-USD', 'XRP-USD', 'OP-USD', 'DOGE-USD', 'MATIC-USD']
+        cryptoSymbols = ['FIL/USD', 'RUNE/USD', 'XRP/USD', 'OP/USD', 'DOGE/USD', 'MATIC/USD']
 
         signals = {}
         for symbol in cryptoSymbols:
-            time.sleep(15)
-            historicalData = yf.download(
-                symbol,
-                start=constants.CandlesConstants.CANDLES_ABS_START_DATE.value,
-                end=constants.CandlesConstants.CANDLES_ABS_END_DATE.value
+            time.sleep(3)
+            request = CalculateRequest (
+                type = "cryptocurrencies",
+                userId = "auth0|65683f9089d738e2258d3080",
+                symbol = symbol,
+                exchange = "",
+                indicator = ULTIMATE_INDICATOR,
             )
+            historicalData = self._candlesProvider.getCandles(request, "e21a1ce91bfc46d79fa61834cfcedff3")
             lastFiveSignals = self._getLastFiveSignals(historicalData)
             signals[symbol] = lastFiveSignals
 
@@ -41,13 +44,12 @@ class UltimateCalculator:
         data = pd.DataFrame(df).reset_index()
         data['Date'] = pd.to_datetime(data['Date'])
 
-        (date, open, high, low, close, volume) = (
+        (date, open, high, low, close) = (
             data['Date'],
             data['Open'],
             data['High'],
             data['Low'],
-            data['Close'],
-            data['Volume']
+            data['Close']
         )
 
         return (
@@ -55,4 +57,4 @@ class UltimateCalculator:
             ['Buy' if value else 'Sell' for value in eval(ULTIMATE_INDICATOR)[-5:]]
         )
 
-ultimateCalculator = UltimateCalculator(utils.AwsUtils.instance(), utils.MailingUtils.instance())
+ultimateCalculator = UltimateCalculator()
