@@ -6,8 +6,6 @@ import logging
 
 INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=. ]+$'
 
-# Calculate endpoint which calculate the given indicator on the given symbol and finds the current amount of money if the user
-# followed the indicator starting with X amount of cash
 class CalculateActivity:
 
     @staticmethod
@@ -18,6 +16,8 @@ class CalculateActivity:
         self._handler = handler
 
     def act(self, request: CalculateRequest):
+        if request.userId is None:
+            raise HTTPException(status_code = 403, detail = 'User Id can\'t be null')
         if request.exchange is None:
             raise HTTPException(status_code = 403, detail = 'Exchange can\'t be null')
         if request.interval is None:
@@ -37,7 +37,7 @@ class CalculateActivity:
             logging.error(f"NameError while processing /calculate", ne)
             raise HTTPException(status_code = 403, detail = 'Unsupported indicator')
         except Exception as e:
-            logging.error(f"Exception while processing /calculate", ne)
+            logging.error(f"Exception while processing /calculate", e)
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
 
 calculateActivity = CalculateActivity(CalculateHandler.instance())

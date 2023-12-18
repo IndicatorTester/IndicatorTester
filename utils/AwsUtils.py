@@ -64,6 +64,17 @@ class AwsUtils:
             Item = self._toDynamoItem(item)
         )
 
+    def getUserData(self, userId: str):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        response = dynamodb.get_item(
+            TableName = constants.AwsConstants.USERS_TABLE.value,
+            Key = self._toDynamoItem({"userId": userId})
+        )['Item']
+        return {
+            "userId": response["userId"]["S"],
+            "apiKey": response["apiKey"]["S"]
+        }
+
     def _itemsToJson(self, items):
         jsonItems = []
         for item in items:
@@ -77,7 +88,7 @@ class AwsUtils:
             jsonItems.append(item)
         return jsonItems
 
-    def _toDynamoItem(json_record):
+    def _toDynamoItem(self, json_record):
         item = {}
 
         for key, value in json_record.items():

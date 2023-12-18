@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from constants import CandlesConstants
 
 class CalculateRequest(BaseModel):
+    type: str = Field(None)
+    userId: str = Field(None)
     symbol: str = Field(None)
     exchange: str = Field(None)
     indicator: str = Field(None)
