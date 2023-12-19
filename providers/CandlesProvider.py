@@ -12,11 +12,10 @@ class CandlesProvider:
 
     def __init__(self, awsUtils: utils.AwsUtils) -> None:
         self._awsUtils = awsUtils
-        self._cache = {}
 
-    def getCandles(self, request: CalculateRequest, apiKey: str) -> pd.DataFrame:
+    def getCandles(self, request: CalculateRequest) -> pd.DataFrame:
         response = requests.get("https://api.twelvedata.com/time_series?" \
-            f"apikey={apiKey}" \
+            f"apikey={request.apiKey}" \
             f"&exchange={request.exchange}" \
             f"&interval={request.interval}" \
             f"&symbol={request.symbol}" \

@@ -25,12 +25,13 @@ class UltimateCalculator:
             time.sleep(3)
             request = CalculateRequest (
                 type = "cryptocurrencies",
-                userId = "auth0|65683f9089d738e2258d3080",
+                userId = "",
                 symbol = symbol,
                 exchange = "",
                 indicator = ULTIMATE_INDICATOR,
+                apiKey = "e21a1ce91bfc46d79fa61834cfcedff3",
             )
-            historicalData = self._candlesProvider.getCandles(request, "e21a1ce91bfc46d79fa61834cfcedff3")
+            historicalData = self._candlesProvider.getCandles(request)
             lastFiveSignals = self._getLastFiveSignals(historicalData)
             signals[symbol] = lastFiveSignals
 

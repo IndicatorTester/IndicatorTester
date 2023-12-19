@@ -1,7 +1,6 @@
 from providers.CandlesProvider import CandlesProvider
 from Indicators import *
 from models.CalculateRequest import CalculateRequest
-from utils import AwsUtils
 
 class CalculateHandler:
 
@@ -10,12 +9,10 @@ class CalculateHandler:
         return calculateHandler
 
     def __init__(self) -> None:
-        self._awsUtils = AwsUtils.instance()
         self._candlesProvider = CandlesProvider.instance()
 
     def handle(self, request: CalculateRequest):
-        userData = self._awsUtils.getUserData(request.userId)
-        data = self._candlesProvider.getCandles(request, userData['apiKey'])
+        data = self._candlesProvider.getCandles(request)
         data['Date'] = pd.to_datetime(data['Date'])
         data = data.set_index('Date').loc[request.startDate : request.endDate].reset_index()
 

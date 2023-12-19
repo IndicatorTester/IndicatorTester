@@ -18,6 +18,8 @@ class CalculateActivity:
     def act(self, request: CalculateRequest):
         if request.userId is None:
             raise HTTPException(status_code = 403, detail = 'User Id can\'t be null')
+        if request.apiKey is None:
+            raise HTTPException(status_code = 403, detail = 'Api Key can\'t be null')
         if request.exchange is None:
             raise HTTPException(status_code = 403, detail = 'Exchange can\'t be null')
         if request.interval is None:
