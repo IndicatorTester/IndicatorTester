@@ -1,5 +1,6 @@
 import os
 from auth0.v3.authentication import GetToken
+from auth0.v3.exceptions import Auth0Error
 from auth0.v3.management import Auth0
 from dotenv import load_dotenv
 import logging
@@ -11,6 +12,30 @@ class AuthUtils:
         return authUtils
 
     def __init__(self):
+        self._authenticate()
+
+    async def isUserLoggedIn(self, userId: str, tries: int = 0) -> bool:
+        try:
+            logging.info(f"Check user login for id: [{userId}]")
+            if userId == None:
+                return False
+            user_info = self._auth0.users.get(userId)
+            return user_info != None
+        except Auth0Error as e:
+            if e.status_code == 401:
+                self._authenticate()
+                if tries == 0:
+                    self._isUserLoggedIn(userId, 1)
+                else:
+                    return False
+            else:
+                logging.error(f"Auth Error while checking user login for id: [{userId}]", e)
+                return False
+        except Exception as e:
+            logging.error(f"Error while checking user login for id: [{userId}]", e)
+            return False
+
+    def _authenticate(self):
         load_dotenv()
         auth0_domain = os.getenv("AUTH0_DOMAIN")
         client_id = os.getenv("AUTH0_CLIENT_ID")
@@ -21,13 +46,6 @@ class AuthUtils:
 
         self._auth0 = Auth0(auth0_domain, token['access_token'])
 
-    async def isUserLoggedIn(self, userId: str) -> bool:
-        try:
-            logging.info(f"Check user login for id: [{userId}]")
-            user_info = self._auth0.users.get(userId)
-            return user_info != None
-        except Exception as e:
-            logging.error(f"Error while checking user login for id: [{userId}]", e)
-            return False
+        logging.info("Authenticate with new token")
 
 authUtils = AuthUtils()
