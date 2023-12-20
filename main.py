@@ -1,7 +1,7 @@
 import os
 import sys
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, Header
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import logging
@@ -31,8 +31,8 @@ app.add_middleware(
 async def health():
     return {'message': 'healthy'}
 
-async def validateAccess(Auth: str = Header(None, convert_underscores=False)):
-    if not (await authUtils.isUserLoggedIn(Auth)):
+def validateAccess(request: Request):
+    if not authUtils.hasAccess(dict(request.headers)):
         raise HTTPException(status_code=403, detail='Access Denied')
 
 @app.post('/calculate')
