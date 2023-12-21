@@ -43,6 +43,10 @@ async def calculate(request: models.CalculateRequest, Auth: str = Depends(valida
 async def calculate(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
     return activities.UpdateUserActivity.instance().act(request)
 
+@app.post('/preOrder')
+async def calculate(request: models.AddPreOrderRequest, Auth: str = Depends(validateAccess)):
+    return activities.AddPreOrderActivity.instance().act(request)
+
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
 
 @app.get('/ultimateCalculator')

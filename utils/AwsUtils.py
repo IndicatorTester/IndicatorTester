@@ -7,8 +7,8 @@ class AwsUtils:
     def instance():
         return awsUtils
 
-    def __init__(self, awsClient: AwsClient) -> None:
-        self._awsClient = awsClient
+    def __init__(self) -> None:
+        self._awsClient = AwsClient.instance()
 
     def getUserData(self, userId: str):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
@@ -37,6 +37,13 @@ class AwsUtils:
             ReturnValues="UPDATED_NEW"
         )
         return response
+
+    def addPreOrder(self, ip: str, email: str):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        dynamodb.put_item(
+            TableName = constants.AwsConstants.PRE_ORDERS_TABLE.value,
+            Item = {"ip": {"S": ip}, "email": {"S": email}}
+        )
 
     def _toDynamoItem(self, json_record):
         item = {}
@@ -67,4 +74,4 @@ class AwsUtils:
         else:
             return {'NULL': True}
 
-awsUtils = AwsUtils(AwsClient.instance())
+awsUtils = AwsUtils()

@@ -1,2 +1,3 @@
 from .CalculateActivity import CalculateActivity
 from .UpdateUserActivity import UpdateUserActivity
+from .AddPreOrderActivity import AddPreOrderActivity
