@@ -33,6 +33,7 @@ async def health():
 
 def validateAccess(request: Request):
     if not authUtils.hasAccess(dict(request.headers)):
+        logging.warn(f"Invalid auth header: [{dict(request.headers)['auth']}]")
         raise HTTPException(status_code=403, detail='Access Denied')
 
 @app.post('/calculate')
