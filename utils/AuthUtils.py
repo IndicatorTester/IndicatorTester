@@ -1,7 +1,6 @@
 import hashlib
 import os
 from dotenv import load_dotenv
-import logging
 
 class AuthUtils:
 
@@ -16,7 +15,6 @@ class AuthUtils:
     def hasAccess(self, headers: {}) -> bool:
         value = headers["timestamp"] + self._X_INDICATOR_API_KEY + headers["timestamp"]
         hash = hashlib.sha512(value.encode('utf-8')).hexdigest()
-        logging.debug(f"Comparing server auth: [{hash}], with client auth: [{headers['auth']}]")
         return hash == headers["auth"]
 
 authUtils = AuthUtils()
