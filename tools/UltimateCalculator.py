@@ -5,7 +5,7 @@ from providers.CandlesProvider import CandlesProvider
 import utils
 from Indicators import *
 
-ULTIMATE_INDICATOR = 'sma(close, 5) > sma(open, 5)'
+ULTIMATE_INDICATOR = 'sma(close, 3) > sma(open, 3)'
 
 class UltimateCalculator:
 
@@ -15,14 +15,13 @@ class UltimateCalculator:
 
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
-        self._mailingUtils = utils.MailingUtils.instance()
+        self._telegramUtils = utils.TelegramUtils.instance()
 
     def run(self):
         cryptoSymbols = ['FIL/USD', 'RUNE/USD', 'XRP/USD', 'OP/USD', 'DOGE/USD', 'MATIC/USD']
 
-        signals = {}
         for symbol in cryptoSymbols:
-            time.sleep(3)
+            time.sleep(5)
             request = CalculateRequest (
                 type = "cryptocurrencies",
                 userId = "",
@@ -30,12 +29,11 @@ class UltimateCalculator:
                 exchange = "",
                 indicator = ULTIMATE_INDICATOR,
                 apiKey = "e21a1ce91bfc46d79fa61834cfcedff3",
+                interval = "4h"
             )
             historicalData = self._candlesProvider.getCandles(request)
             lastFiveSignals = self._getLastFiveSignals(historicalData)
-            signals[symbol] = lastFiveSignals
-
-        self._mailingUtils.sendUltimateCalculatorReport(signals)
+            self._sendViaTelegram(symbol, lastFiveSignals)
 
         return {
             'success': True
@@ -54,8 +52,14 @@ class UltimateCalculator:
         )
 
         return (
-            [date.strftime('%Y-%m-%d') for date in data['Date'].apply(pd.to_datetime).dt.date.tolist()[-5:]],
+            [value.strftime("%Y-%m-%d %H:%M:%S") for value in date.tolist()[-5:]],
             ['Buy' if value else 'Sell' for value in eval(ULTIMATE_INDICATOR)[-5:]]
         )
+
+    def _sendViaTelegram(self, symbol, signals):
+        telegramMessage = f"{symbol}\n\n"
+        for i in range(5):
+            telegramMessage += f"Time -> {str(signals[0][i])} | Signal -> {signals[1][i]}\n\n"
+        self._telegramUtils.sendMessage(telegramMessage)
 
 ultimateCalculator = UltimateCalculator()

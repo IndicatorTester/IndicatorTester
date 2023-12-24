@@ -43,7 +43,7 @@ class CalculateHandler:
                         stocks = cash / close[index]
                         cash = 0
                         actions.append({
-                            'date': str(date[index]).split(' ')[0],
+                            'date': str(date[index]),
                             'price': close[index],
                             'action': 'buy',
                             'stocks': stocks,
@@ -53,7 +53,7 @@ class CalculateHandler:
                         cash = stocks * close[index]
                         stocks = 0
                         actions.append({
-                            'date': str(date[index]).split(' ')[0],
+                            'date': str(date[index]),
                             'price': close[index],
                             'action': 'sell',
                             'stocks': stocks,
