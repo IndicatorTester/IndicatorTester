@@ -38,7 +38,6 @@ class AutoTrader:
             )
             historicalData = self._candlesProvider.getCandles(request)
             signals = self._calculateSymbolSignals(historicalData)
-            print(signals)
 
             if len(signals) > 1 and signals[-1] != signals[-2]:
                 tradeResult = self._bybitUtils.trade(symbol, signals[-1])

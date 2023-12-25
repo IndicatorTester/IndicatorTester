@@ -27,7 +27,8 @@ class BybitUtils:
             time.sleep(5)
 
             url = 'https://api.bybit.com/v5/order/create/?'
-            timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
+            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
+            timestamp = int(datetime.utcnow().timestamp()) * 1000
             recvWindow = 5000
 
             baseCoin, quoteCoin = symbol.split('/')[0], "USDT"
@@ -73,8 +74,8 @@ class BybitUtils:
                     return f"Sell Trade succeeded with and the asset value became: {newAssetValue}"
                 return "Buy Trade succeeded"
 
-            logging.warn(f"Unable to trade with Bybit with response: {response}")
-            return f"Unable to trade with Bybit with response: {response}"
+            logging.warn(f"Unable to trade with Bybit with response: {json.dumps(response)}")
+            return f"Unable to trade with Bybit with response: {json.dumps(response)}"
         except Exception as e:
             logging.error(f"An error occurred while Trading with Bybit: {str(e)}")
             return f"An error occurred while Trading with Bybit: {str(e)}"
@@ -82,7 +83,8 @@ class BybitUtils:
     def _getSpotCoin(self, coin: str):
         try :
             url = f'https://api.bybit.com/v5/asset/transfer/query-asset-info/?accountType=SPOT&coin={coin}'
-            timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
+            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
+            timestamp = int(datetime.utcnow().timestamp()) * 1000
             recvWindow = 5000
 
             headers = {
