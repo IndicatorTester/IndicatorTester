@@ -29,7 +29,8 @@ class UltimateCalculator:
                 exchange = "",
                 indicator = ULTIMATE_INDICATOR,
                 apiKey = "e21a1ce91bfc46d79fa61834cfcedff3",
-                interval = "4h"
+                interval = "4h",
+                startDate = "2023-12-01"
             )
             historicalData = self._candlesProvider.getCandles(request)
             lastFiveSignals = self._getLastFiveSignals(historicalData)
