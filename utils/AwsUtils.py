@@ -45,6 +45,30 @@ class AwsUtils:
             Item = {"ip": {"S": ip}, "email": {"S": email}}
         )
 
+    def getByBitCoinAsset(self, coin):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        response = dynamodb.get_item(
+            TableName=constants.AwsConstants.BYBIT_TABLE.value,
+            Key={'coin': {'S': coin}}
+        )
+        return str(response['Item']['value']['S'])
+
+    def updateByBitCoinAsset(self, coin, value):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        dynamodb.delete_item(
+            TableName=constants.AwsConstants.BYBIT_TABLE.value,
+            Key={
+                'coin': {'S': coin}
+            }
+        )
+        dynamodb.put_item(
+            TableName=constants.AwsConstants.BYBIT_TABLE.value,
+            Item={
+                'coin': {'S': coin},
+                'value': {'S': value}
+            }
+        )
+
     def _toDynamoItem(self, json_record):
         item = {}
 

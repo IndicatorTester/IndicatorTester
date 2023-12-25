@@ -1,6 +1,5 @@
 import requests
 import logging
-import json
 
 BOT_TOKEN = "6989207560:AAGe3KWZRhrhVhTlJ5H8zRDmQJtsi3Vb7cU"
 BOT_NAME = "XIndicator_bot"

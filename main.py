@@ -11,7 +11,7 @@ project_directory = os.path.dirname(os.path.dirname(current_script_path))
 sys.path.append(project_directory)
 logging.basicConfig(level=logging.INFO)
 
-from utils.AuthUtils import AuthUtils
+from utils import AuthUtils
 import activities
 import models
 import tools
@@ -55,6 +55,12 @@ async def runUltimateCalculator(key: str = None):
     if key != TOOLS_ACCESS_KEY:
         raise HTTPException(status_code=403, detail='Access Denied')
     return tools.UltimateCalculator.instance().run()
+
+@app.get('/autoTrader')
+async def runUltimateCalculator(key: str = None):
+    if key != TOOLS_ACCESS_KEY:
+        raise HTTPException(status_code=403, detail='Access Denied')
+    return tools.AutoTrader.instance().trade()
 
 if __name__ == "__main__":
     load_dotenv()
