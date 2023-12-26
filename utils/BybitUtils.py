@@ -27,8 +27,8 @@ class BybitUtils:
             time.sleep(5)
 
             url = 'https://api.bybit.com/v5/order/create/?'
-            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
             timestamp = int(datetime.utcnow().timestamp()) * 1000
+            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
             recvWindow = 5000
 
             baseCoin, quoteCoin = symbol.split('/')[0], "USDT"
@@ -60,19 +60,25 @@ class BybitUtils:
             }
 
             response = requests.post(url, headers=headers, json=body).json()
+            # response = {'retCode': 0}
             if response['retCode'] == 0:
                 time.sleep(10)
-                newUSDT = self._getSpotCoin("USDT")['result']['spot']['assets'][0]['free']
-                newAssetValue = str(
-                    Decimal(newUSDT).quantize(Decimal('0.0'), rounding=ROUND_DOWN) - Decimal(currentUSDT).quantize(Decimal('0.0'), rounding=ROUND_DOWN)
-                )
                 if signal == 'Sell':
+                    newUSDT = self._getSpotCoin("USDT")['result']['spot']['assets'][0]['free']
+                    newAssetValue = str(
+                        Decimal(newUSDT).quantize(Decimal('0.0'), rounding=ROUND_DOWN) - Decimal(currentUSDT).quantize(Decimal('0.0'), rounding=ROUND_DOWN)
+                    )
                     self._awsUtils.updateByBitCoinAsset(
                         baseCoin,
                         newAssetValue
                     )
                     return f"Sell Trade succeeded with and the asset value became: {newAssetValue}"
-                return "Buy Trade succeeded"
+                else:
+                    self._awsUtils.updateByBitCoinAsset(
+                        baseCoin,
+                        "0.0"
+                    )
+                    return "Buy Trade succeeded"
 
             logging.warn(f"Unable to trade with Bybit with response: {json.dumps(response)}")
             return f"Unable to trade with Bybit with response: {json.dumps(response)}"
@@ -83,8 +89,8 @@ class BybitUtils:
     def _getSpotCoin(self, coin: str):
         try :
             url = f'https://api.bybit.com/v5/asset/transfer/query-asset-info/?accountType=SPOT&coin={coin}'
-            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
             timestamp = int(datetime.utcnow().timestamp()) * 1000
+            # timestamp = int(datetime.utcnow().timestamp()) * 1000 + (3 * 60 * 60 * 1000)
             recvWindow = 5000
 
             headers = {

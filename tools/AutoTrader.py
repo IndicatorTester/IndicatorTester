@@ -4,13 +4,14 @@ from models import CalculateRequest
 from providers.CandlesProvider import CandlesProvider
 from utils import BybitUtils, TelegramUtils
 from Indicators import *
+import logging
 
 BUY_SIGNAL = 'Buy'
 SELL_SIGNAL = 'Sell'
 TRADING_INTERVAL = '45min'
 TRADING_INDICATOR = 'sma(close, 3) > sma(open, 3)'
 DATA_PROVIDER_KEY = 'e21a1ce91bfc46d79fa61834cfcedff3'
-SYMBOLS = ['DOGE/USD']
+SYMBOLS = ['DOGE/USD', 'MATIC/USD']
 
 class AutoTrader:
 
@@ -26,27 +27,33 @@ class AutoTrader:
     def trade(self):
         for symbol in SYMBOLS:
             time.sleep(10)
-            request = CalculateRequest (
-                type = "cryptocurrencies",
-                userId = "",
-                symbol = symbol,
-                exchange = "",
-                indicator = TRADING_INDICATOR,
-                apiKey = DATA_PROVIDER_KEY,
-                interval = TRADING_INTERVAL,
-                startDate = "2023-12-01"
-            )
-            historicalData = self._candlesProvider.getCandles(request)
-            signals = self._calculateSymbolSignals(historicalData)
-
-            if len(signals) > 1 and signals[-1] != signals[-2]:
-                tradeResult = self._bybitUtils.trade(symbol, signals[-1])
-                self._telegramUtils.sendMessage(
-                    f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
+            try :
+                request = CalculateRequest (
+                    type = "cryptocurrencies",
+                    userId = "",
+                    symbol = symbol,
+                    exchange = "",
+                    indicator = TRADING_INDICATOR,
+                    apiKey = DATA_PROVIDER_KEY,
+                    interval = TRADING_INTERVAL,
+                    startDate = "2023-12-01"
                 )
-            else:
+                historicalData = self._candlesProvider.getCandles(request)
+                signals = self._calculateSymbolSignals(historicalData)
+
+                if len(signals) > 1 and signals[-1] != signals[-2]:
+                    tradeResult = self._bybitUtils.trade(symbol, signals[-1])
+                    self._telegramUtils.sendMessage(
+                        f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
+                    )
+                else:
+                    self._telegramUtils.sendMessage(
+                        f"No action on symbol: {symbol}"
+                    )
+            except Exception as e:
+                logging.error(f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}")
                 self._telegramUtils.sendMessage(
-                    f"No action on symbol: {symbol}"
+                    f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}"
                 )
 
         return {
