@@ -18,7 +18,7 @@ class UltimateCalculator:
         self._telegramUtils = utils.TelegramUtils.instance()
 
     def run(self):
-        cryptoSymbols = ['FIL/USD', 'RUNE/USD', 'XRP/USD', 'OP/USD']
+        cryptoSymbols = []
 
         for symbol in cryptoSymbols:
             time.sleep(5)

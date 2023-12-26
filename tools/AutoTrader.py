@@ -11,7 +11,7 @@ SELL_SIGNAL = 'Sell'
 TRADING_INTERVAL = '45min'
 TRADING_INDICATOR = 'sma(close, 3) > sma(open, 3)'
 DATA_PROVIDER_KEY = 'e21a1ce91bfc46d79fa61834cfcedff3'
-SYMBOLS = ['DOGE/USD', 'MATIC/USD']
+SYMBOLS = ['DOGE/USD', 'MATIC/USD', 'FIL/USD', 'RUNE/USD', 'XRP/USD', 'OP/USD']
 
 class AutoTrader:
 
