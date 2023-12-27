@@ -39,7 +39,7 @@ class AutoTrader:
                     startDate = "2023-12-01"
                 )
                 historicalData = self._candlesProvider.getCandles(request)
-                signals = self._calculateSymbolSignals(historicalData)
+                signals = self._calculateSymbolSignals(symbol, historicalData)
 
                 if len(signals) > 1 and signals[-1] != signals[-2]:
                     tradeResult = self._bybitUtils.trade(symbol, signals[-1])
@@ -51,7 +51,7 @@ class AutoTrader:
                         f"No action on symbol: {symbol}"
                     )
             except Exception as e:
-                logging.error(f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}")
+                logging.error(f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}", e)
                 self._telegramUtils.sendMessage(
                     f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}"
                 )
@@ -60,7 +60,7 @@ class AutoTrader:
             "success": True
         }
 
-    def _calculateSymbolSignals(self, historicalData: pd.DataFrame):
+    def _calculateSymbolSignals(self, symbol: str, historicalData: pd.DataFrame):
         data = pd.DataFrame(historicalData).reset_index()
         data['Date'] = pd.to_datetime(data['Date'])
 
@@ -72,6 +72,11 @@ class AutoTrader:
             data['Close']
         )
 
-        return [BUY_SIGNAL if value else SELL_SIGNAL for value in eval(TRADING_INDICATOR)[-5:]]
+        times = [value.strftime("%Y-%m-%d %H:%M:%S") for value in date.tolist()[-5:]]
+        signals = [BUY_SIGNAL if value else SELL_SIGNAL for value in eval(TRADING_INDICATOR)[-5:]]
+
+        logging.info(f"Calculated symbol signals: {symbol}. Signals: {signals}, times: {times}")
+
+        return signals
 
 autoTrader = AutoTrader()

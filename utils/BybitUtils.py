@@ -83,7 +83,7 @@ class BybitUtils:
             logging.warn(f"Unable to trade with Bybit with response: {json.dumps(response)}")
             return f"Unable to trade with Bybit with response: {json.dumps(response)}"
         except Exception as e:
-            logging.error(f"An error occurred while Trading with Bybit: {str(e)}")
+            logging.error(f"An error occurred while Trading with Bybit: {str(e)}", e)
             return f"An error occurred while Trading with Bybit: {str(e)}"
 
     def _getSpotCoin(self, coin: str):
@@ -108,7 +108,7 @@ class BybitUtils:
             logging.warn(f"Unable to trade with Bybit with response: {response}")
             return None
         except Exception as e:
-            logging.error(f"An error occurred while getting Spot Assets with Bybit: {str(e)}")
+            logging.error(f"An error occurred while getting Spot Assets with Bybit: {str(e)}", e)
             return None
 
     def _generateSign(self, sign_request_params, timestamp, recv_window):
