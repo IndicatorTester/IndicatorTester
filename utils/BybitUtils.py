@@ -51,6 +51,8 @@ class BybitUtils:
                 "quoteCoin": quoteCoin
             }
 
+            logging.info(f"Action {signal} on {symbol} with quantity: {body['qty']}")
+
             headers = {
                 'Content-Type': 'application/json',
                 'X-BAPI-SIGN': self._generateSign(json.dumps(body), timestamp, recvWindow),
