@@ -13,8 +13,8 @@ class AuthUtils:
         self._X_INDICATOR_API_KEY = os.getenv("X_INDICATOR_API_KEY");
 
     def hasAccess(self, headers: {}) -> bool:
-        value = headers["timestamp"] + self._X_INDICATOR_API_KEY + headers["timestamp"]
+        value = headers["x_timestamp"] + self._X_INDICATOR_API_KEY + headers["x_timestamp"]
         hash = hashlib.sha512(value.encode('utf-8')).hexdigest()
-        return hash == headers["auth"]
+        return hash == headers["x_auth"]
 
 authUtils = AuthUtils()

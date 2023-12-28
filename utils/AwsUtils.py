@@ -1,5 +1,7 @@
 from clients.AwsClient import AwsClient
 import constants
+import datetime
+import pickle
 
 class AwsUtils:
 
@@ -67,6 +69,22 @@ class AwsUtils:
                 'coin': {'S': coin},
                 'value': {'S': value}
             }
+        )
+
+    def addIndicatorTest(self, indicatorTestData):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        dynamodb.put_item(
+            TableName = constants.AwsConstants.INDICATOR_TESTS_TABLE.value,
+            Item = self._toDynamoItem(indicatorTestData)
+        )
+
+    def addIndicatorTestActions(self, userId, timestamp, symbol, actions):
+        date = str(datetime.datetime.utcfromtimestamp(int(timestamp)).date())
+        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
+        s3.put_object(
+            Bucket=constants.AwsConstants.TESTS_RESULT_BUCKET.value,
+            Key=f"{userId}/{symbol}/{date}/{timestamp}.json",
+            Body=pickle.dumps(actions)
         )
 
     def _toDynamoItem(self, json_record):

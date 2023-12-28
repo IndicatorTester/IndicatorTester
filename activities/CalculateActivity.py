@@ -12,10 +12,12 @@ class CalculateActivity:
     def instance():
         return calculateActivity
 
-    def __init__(self, handler: CalculateHandler) -> None:
-        self._handler = handler
+    def __init__(self) -> None:
+        self._handler = CalculateHandler.instance()
 
     def act(self, request: CalculateRequest):
+        if not request.timestamp.isdigit():
+            raise HTTPException(status_code = 403, detail = 'Invalid timestamp value')
         if request.userId is None:
             raise HTTPException(status_code = 403, detail = 'User Id can\'t be null')
         if request.apiKey is None:
@@ -42,4 +44,4 @@ class CalculateActivity:
             logging.error(f"Exception while processing /calculate", e)
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
 
-calculateActivity = CalculateActivity(CalculateHandler.instance())
+calculateActivity = CalculateActivity()

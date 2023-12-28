@@ -1,3 +1,4 @@
-from .CalculateRequest import CalculateRequest
-from .UpdateUserRequest import UpdateUserRequest
 from .AddPreOrderRequest import AddPreOrderRequest
+from .CalculateRequest import CalculateRequest
+from .IndicatorTestRecord import IndicatorTestRecord
+from .UpdateUserRequest import UpdateUserRequest
