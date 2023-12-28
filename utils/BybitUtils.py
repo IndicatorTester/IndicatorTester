@@ -41,17 +41,21 @@ class BybitUtils:
             coinQty = Decimal(freeAmount).quantize(Decimal('0.0'), rounding=ROUND_DOWN)
             usdtQty = self._awsUtils.getByBitCoinAsset(baseCoin)
 
+            tradeQty = str(usdtQty) if signal == "Buy" else str(coinQty)
+            if tradeQty == '0.0':
+                return f"Stop {signal} action on {symbol} as the trading value is [0.0]"
+
             body = {
                 "category": "spot",
                 "symbol": baseCoin + quoteCoin,
                 "side": signal,
                 "orderType": "Market",
-                "qty": str(usdtQty) if signal == "Buy" else str(coinQty),
+                "qty": tradeQty,
                 "baseCoin": baseCoin,
                 "quoteCoin": quoteCoin
             }
 
-            logging.info(f"Action {signal} on {symbol} with quantity: {body['qty']}")
+            logging.info(f"Action {signal} on {symbol} with quantity: {tradeQty}")
 
             headers = {
                 'Content-Type': 'application/json',
