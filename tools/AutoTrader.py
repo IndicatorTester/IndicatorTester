@@ -41,7 +41,7 @@ class AutoTrader:
                 historicalData = self._candlesProvider.getCandles(request)
                 signals = self._calculateSymbolSignals(symbol, historicalData)
 
-                if len(signals) > 1 and signals[-1] != signals[-2]:
+                if len(signals) > 2 and signals[-3] != signals[-2] and signals[-2] == signals[-1]:
                     tradeResult = self._bybitUtils.trade(symbol, signals[-1])
                     self._telegramUtils.sendMessage(
                         f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
