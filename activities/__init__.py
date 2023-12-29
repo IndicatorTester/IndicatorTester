@@ -1,3 +1,4 @@
-from .CalculateActivity import CalculateActivity
-from .UpdateUserActivity import UpdateUserActivity
 from .AddPreOrderActivity import AddPreOrderActivity
+from .CalculateActivity import CalculateActivity
+from .GetTestArchiveActivity import GetTestArchiveActivity
+from .UpdateUserActivity import UpdateUserActivity

@@ -41,12 +41,20 @@ async def calculate(request: models.CalculateRequest, Auth: str = Depends(valida
     return activities.CalculateActivity.instance().act(request)
 
 @app.put('/user')
-async def calculate(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
+async def user(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
     return activities.UpdateUserActivity.instance().act(request)
 
 @app.post('/preOrder')
-async def calculate(request: models.AddPreOrderRequest, Auth: str = Depends(validateAccess)):
+async def preOrder(request: models.AddPreOrderRequest, Auth: str = Depends(validateAccess)):
     return activities.AddPreOrderActivity.instance().act(request)
+
+@app.get('/testArchive')
+async def testArchive(userId: str, timestamp: str, pageNumber: int, Auth: str = Depends(validateAccess)):
+    return activities.GetTestArchiveActivity.instance().act(
+        userId=userId,
+        timestamp=timestamp,
+        pageNumber=pageNumber
+    )
 
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
 
@@ -57,7 +65,7 @@ async def runUltimateCalculator(key: str = None):
     return tools.UltimateCalculator.instance().run()
 
 @app.get('/autoTrader')
-async def runUltimateCalculator(key: str = None):
+async def runAutoTrader(key: str = None):
     if key != TOOLS_ACCESS_KEY:
         raise HTTPException(status_code=403, detail='Access Denied')
     return tools.AutoTrader.instance().trade()

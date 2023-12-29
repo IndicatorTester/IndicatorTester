@@ -78,6 +78,44 @@ class AwsUtils:
             Item = self._toDynamoItem(indicatorTestData)
         )
 
+    def getIndicatorTests(self, userId, timestamp, pageNumber):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        page_size = 20
+
+        key_condition_expression = 'userId = :uid'
+        expression_attribute_values = {':uid': {'S': userId}}
+        scan_index_forward = False
+        response = None
+
+        if pageNumber > 1:
+            last_evaluated_key = {
+                'userId': {'S': userId},
+                'timestamp': {'S': timestamp}
+            }
+            response = dynamodb.query(
+                TableName=constants.AwsConstants.INDICATOR_TESTS_TABLE.value,
+                KeyConditionExpression=key_condition_expression,
+                ExpressionAttributeValues=expression_attribute_values,
+                ScanIndexForward=scan_index_forward,
+                Limit=page_size,
+                ExclusiveStartKey=last_evaluated_key
+            )
+        else:
+            last_evaluated_key = None
+            response = dynamodb.query(
+                TableName=constants.AwsConstants.INDICATOR_TESTS_TABLE.value,
+                KeyConditionExpression=key_condition_expression,
+                ExpressionAttributeValues=expression_attribute_values,
+                ScanIndexForward=scan_index_forward,
+                Limit=page_size
+            )
+
+        items = []
+        for item in response['Items']:
+            items.append(self._fromDynamodbStringItems(item))
+
+        return items
+
     def addIndicatorTestActions(self, userId, timestamp, symbol, actions):
         date = str(datetime.datetime.utcfromtimestamp(int(timestamp)).date())
         s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
@@ -103,6 +141,12 @@ class AwsUtils:
                 item[key] = {'NULL': True}
 
         return item
+
+    def _fromDynamodbStringItems(self, dynamodb_data):
+        data = {}
+        for key in dynamodb_data.keys():
+            data[key] = dynamodb_data[key]['S']
+        return data
 
     def _getObjectWithType(self, value):
         if isinstance(value, str):
