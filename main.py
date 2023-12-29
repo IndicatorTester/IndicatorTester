@@ -56,6 +56,13 @@ async def testArchive(userId: str, timestamp: str, pageNumber: int, Auth: str = 
         pageNumber=pageNumber
     )
 
+@app.get('/testActions')
+async def testActions(userId: str, timestamp: str, Auth: str = Depends(validateAccess)):
+    return activities.GetTestActionsActivity.instance().act(
+        userId=userId,
+        timestamp=timestamp
+    )
+
 TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
 
 @app.get('/ultimateCalculator')

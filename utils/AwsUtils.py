@@ -78,6 +78,17 @@ class AwsUtils:
             Item = self._toDynamoItem(indicatorTestData)
         )
 
+    def getIndicatorTest(self, userId, timestamp):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        response = dynamodb.get_item(
+            TableName=constants.AwsConstants.INDICATOR_TESTS_TABLE.value,
+            Key={
+                'userId': {'S': userId},
+                'timestamp': {'S': timestamp}
+            }
+        )
+        return self._fromDynamodbStringItems(response.get('Item'))
+
     def getIndicatorTests(self, userId, timestamp, pageNumber):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         page_size = 20
@@ -124,6 +135,16 @@ class AwsUtils:
             Key=f"{userId}/{symbol}/{date}/{timestamp}.json",
             Body=pickle.dumps(actions)
         )
+
+    def getIndicatorTestActions(self, userId, timestamp, symbol):
+        date = str(datetime.datetime.utcfromtimestamp(int(timestamp)).date())
+        s3 = self._awsClient.get_client(constants.AwsConstants.S3.value)
+        response = s3.get_object(
+            Bucket=constants.AwsConstants.TESTS_RESULT_BUCKET.value,
+            Key=f"{userId}/{symbol}/{date}/{timestamp}.json"
+        )
+        object_data = response['Body'].read()
+        return pickle.loads(object_data)
 
     def _toDynamoItem(self, json_record):
         item = {}

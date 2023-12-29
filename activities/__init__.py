@@ -1,4 +1,5 @@
 from .AddPreOrderActivity import AddPreOrderActivity
 from .CalculateActivity import CalculateActivity
+from .GetTestActionsActivity import GetTestActionsActivity
 from .GetTestArchiveActivity import GetTestArchiveActivity
 from .UpdateUserActivity import UpdateUserActivity
