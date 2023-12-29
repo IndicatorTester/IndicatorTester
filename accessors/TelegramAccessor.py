@@ -4,11 +4,11 @@ import logging
 BOT_TOKEN = "6989207560:AAGe3KWZRhrhVhTlJ5H8zRDmQJtsi3Vb7cU"
 BOT_NAME = "XIndicator_bot"
 
-class TelegramUtils:
+class TelegramAccessor:
 
     @staticmethod
     def instance():
-        return telegramUtils
+        return telegramAccessor
 
     def __init__(self) -> None:
         pass
@@ -28,4 +28,4 @@ class TelegramUtils:
         except Exception as e:
             logging.error(f"An error occurred while sending message with Telegram: {str(e)}")
 
-telegramUtils = TelegramUtils()
+telegramAccessor = TelegramAccessor()

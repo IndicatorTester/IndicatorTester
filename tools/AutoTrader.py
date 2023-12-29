@@ -1,8 +1,8 @@
 import time
 import pandas as pd
+from accessors import BybitAccessor, TelegramAccessor
 from models import CalculateRequest
 from providers.CandlesProvider import CandlesProvider
-from utils import BybitUtils, TelegramUtils
 from Indicators import *
 import logging
 
@@ -21,8 +21,8 @@ class AutoTrader:
 
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
-        self._bybitUtils = BybitUtils.instance()
-        self._telegramUtils = TelegramUtils.instance()
+        self._bybitAccessor = BybitAccessor.instance()
+        self._telegramAccessor = TelegramAccessor.instance()
 
     def trade(self):
         for symbol in SYMBOLS:
@@ -41,13 +41,13 @@ class AutoTrader:
                 historicalData = self._candlesProvider.getCandles(request)
                 signals = self._calculateSymbolSignals(symbol, historicalData)
 
-                tradeResult = self._bybitUtils.trade(symbol, signals[-1])
-                self._telegramUtils.sendMessage(
+                tradeResult = self._bybitAccessor.trade(symbol, signals[-1])
+                self._telegramAccessor.sendMessage(
                     f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
                 )
             except Exception as e:
                 logging.error(f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}", e)
-                self._telegramUtils.sendMessage(
+                self._telegramAccessor.sendMessage(
                     f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}"
                 )
 

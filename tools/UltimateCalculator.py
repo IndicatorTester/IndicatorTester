@@ -1,8 +1,8 @@
 import time
 import pandas as pd
+from accessors import TelegramAccessor
 from models import CalculateRequest
 from providers.CandlesProvider import CandlesProvider
-import utils
 from Indicators import *
 
 ULTIMATE_INDICATOR = 'sma(close, 3) > sma(open, 3)'
@@ -15,7 +15,7 @@ class UltimateCalculator:
 
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
-        self._telegramUtils = utils.TelegramUtils.instance()
+        self._telegramAccessor = TelegramAccessor.instance()
 
     def run(self):
         cryptoSymbols = []
@@ -61,6 +61,6 @@ class UltimateCalculator:
         telegramMessage = f"{symbol}\n\n"
         for i in range(5):
             telegramMessage += f"Time -> {str(signals[0][i])} | Signal -> {signals[1][i]}\n\n"
-        self._telegramUtils.sendMessage(telegramMessage)
+        self._telegramAccessor.sendMessage(telegramMessage)
 
 ultimateCalculator = UltimateCalculator()

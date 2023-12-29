@@ -11,11 +11,11 @@ from utils import AwsUtils
 API_KEY = 'JBPv6OAXcOocfQHZcP'
 API_SECRET = 'iSfixmKOHeDFMbfc3iyJ8Rhvn6heK7ktpkDw'
 
-class BybitUtils:
+class BybitAccessor:
 
     @staticmethod
     def instance():
-        return bybitUtils
+        return bybitAccessor
 
     def __init__(self) -> None:
         self._awsUtils = AwsUtils.instance()
@@ -122,4 +122,4 @@ class BybitUtils:
         signature = hmac.new(bytes(API_SECRET, 'utf-8'), bytes(params_str, 'utf-8'), hashlib.sha256).hexdigest()
         return signature
 
-bybitUtils = BybitUtils()
+bybitAccessor = BybitAccessor()
