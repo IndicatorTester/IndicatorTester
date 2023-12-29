@@ -9,7 +9,7 @@ import logging
 BUY_SIGNAL = 'Buy'
 SELL_SIGNAL = 'Sell'
 TRADING_INTERVAL = '1h'
-TRADING_INDICATOR = 'sma(close, 3) > sma(open, 3)'
+TRADING_INDICATOR = 'sma(close, 2) > sma(open, 2)'
 DATA_PROVIDER_KEY = 'e21a1ce91bfc46d79fa61834cfcedff3'
 SYMBOLS = ['DOGE/USD', 'MATIC/USD', 'FIL/USD', 'RUNE/USD', 'XRP/USD', 'OP/USD']
 
