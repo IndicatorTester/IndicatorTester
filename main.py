@@ -63,7 +63,7 @@ async def testActions(userId: str, timestamp: str, Auth: str = Depends(validateA
         timestamp=timestamp
     )
 
-TOOLS_ACCESS_KEY = '5d0f733d-7fc4-4d3a-bb7d-516c8709f9b5'
+TOOLS_ACCESS_KEY = '7654a285-b65e-4577-aeac-cc720a30ca37'
 
 @app.get('/ultimateCalculator')
 async def runUltimateCalculator(key: str = None):
