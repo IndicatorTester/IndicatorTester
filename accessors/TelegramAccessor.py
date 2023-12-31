@@ -1,23 +1,21 @@
 import requests
 import logging
 
-BOT_TOKEN = "6989207560:AAGe3KWZRhrhVhTlJ5H8zRDmQJtsi3Vb7cU"
-BOT_NAME = "XIndicator_bot"
-
 class TelegramAccessor:
 
     @staticmethod
-    def instance():
-        return telegramAccessor
+    def instance(botToken, chatId):
+        return TelegramAccessor(botToken, chatId)
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, botToken, chatId) -> None:
+        self._botToken = botToken
+        self._chatId = chatId
 
     def sendMessage(self, message):
         try:
-            url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+            url = f"https://api.telegram.org/bot{self._botToken}/sendMessage"
             params = {
-                "chat_id": "6228767723",
+                "chat_id": self._chatId,
                 "text": str(message)
             }
             response = requests.post(url, params=params)
@@ -27,5 +25,3 @@ class TelegramAccessor:
                 logging.warn(f"Failed to send message with Telegram. Error: {response.text}")
         except Exception as e:
             logging.error(f"An error occurred while sending message with Telegram: {str(e)}")
-
-telegramAccessor = TelegramAccessor()

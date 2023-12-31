@@ -2,4 +2,5 @@ from .AddPreOrderActivity import AddPreOrderActivity
 from .CalculateActivity import CalculateActivity
 from .GetTestActionsActivity import GetTestActionsActivity
 from .GetTestArchiveActivity import GetTestArchiveActivity
+from .SendFeedbackActivity import SendFeedbackActivity
 from .UpdateUserActivity import UpdateUserActivity

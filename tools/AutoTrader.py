@@ -1,6 +1,7 @@
 import time
 import pandas as pd
 from accessors import BybitAccessor, TelegramAccessor
+import constants
 from models import CalculateRequest
 from providers.CandlesProvider import CandlesProvider
 from Indicators import *
@@ -22,7 +23,10 @@ class AutoTrader:
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
         self._bybitAccessor = BybitAccessor.instance()
-        self._telegramAccessor = TelegramAccessor.instance()
+        self._telegramAccessor = TelegramAccessor.instance(
+            constants.TelegramConstants.AUTO_TRADER_BOT_TOKEN.value,
+            constants.TelegramConstants.AUTO_TRADER_BOT_CHAT_ID.value
+        )
 
     def trade(self):
         for symbol in SYMBOLS:

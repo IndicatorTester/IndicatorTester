@@ -63,6 +63,10 @@ async def testActions(userId: str, timestamp: str, Auth: str = Depends(validateA
         timestamp=timestamp
     )
 
+@app.post('/sendFeedback')
+async def sendFeedback(request: models.SendFeedbackRequest, Auth: str = Depends(validateAccess)):
+    return activities.SendFeedbackActivity.instance().act(request)
+
 TOOLS_ACCESS_KEY = '7654a285-b65e-4577-aeac-cc720a30ca37'
 
 @app.get('/ultimateCalculator')

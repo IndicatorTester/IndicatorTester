@@ -4,6 +4,7 @@ from accessors import TelegramAccessor
 from models import CalculateRequest
 from providers.CandlesProvider import CandlesProvider
 from Indicators import *
+import constants
 
 ULTIMATE_INDICATOR = 'sma(close, 3) > sma(open, 3)'
 
@@ -15,7 +16,10 @@ class UltimateCalculator:
 
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
-        self._telegramAccessor = TelegramAccessor.instance()
+        self._telegramAccessor = TelegramAccessor.instance(
+            constants.TelegramConstants.AUTO_TRADER_BOT_TOKEN.value,
+            constants.TelegramConstants.AUTO_TRADER_BOT_CHAT_ID.value
+        )
 
     def run(self):
         cryptoSymbols = []
