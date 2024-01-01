@@ -1,5 +1,6 @@
 import re
 from fastapi import HTTPException
+from errors.DataProviderError import DataProviderError
 from handlers.CalculateHandler import CalculateHandler
 from models.CalculateRequest import CalculateRequest
 import logging
@@ -30,16 +31,25 @@ class CalculateActivity:
             raise HTTPException(status_code = 403, detail = 'Symbol can\'t be null')
         if request.indicator is None:
             raise HTTPException(status_code = 403, detail = 'Indicator can\'t be null')
-        if request.cash <= 0:
+        if request.cash is None or request.cash <= 0:
             raise HTTPException(status_code = 403, detail = 'Cash must be a positive number')
         if not re.match(INDICATOR_PATTERN, request.indicator):
             raise HTTPException(status_code = 403, detail = 'Invalid indicator')
 
         try:
             return self._handler.handle(request)
+        except DataProviderError as dpe:
+            logging.error(f"DataProviderError while processing /calculate", dpe)
+            raise HTTPException(status_code = 403, detail = f'Error while loading historical data: {dpe}')
         except NameError as ne:
             logging.error(f"NameError while processing /calculate", ne)
-            raise HTTPException(status_code = 403, detail = 'Unsupported indicator')
+            raise HTTPException(status_code = 403, detail = f'Error while processing the indicator: {ne}')
+        except SyntaxError as se:
+            logging.error(f"SyntaxError while processing /calculate", se)
+            raise HTTPException(status_code = 403, detail = f'Error while processing the indicator: {se}')
+        except ValueError as ve:
+            logging.error(f"ValueError while processing /calculate", ve)
+            raise HTTPException(status_code = 403, detail = f'Error while processing the indicator: {ve}')
         except Exception as e:
             logging.error(f"Exception while processing /calculate", e)
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
