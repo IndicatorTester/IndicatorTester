@@ -75,7 +75,7 @@ class CalculateHandler:
             'end': str(date.tolist()[-1]).split(' ')[0],
             'cash': cash,
             'actions': actions,
-            'profit': request.cash - cash,
+            'profit': cash - request.cash,
             'profitPercentage': profitPercentage,
             'success': True
         }
