@@ -29,43 +29,43 @@ class CalculateHandler:
 
         buySellSignals = eval(request.indicator)
 
-        (cash, stocks, preSignal, startSignal, actions) = (
+        (cash, stocks, preSignal, actions) = (
             request.cash,
             0,
-            False, 
-            next((i for i, value in enumerate(buySellSignals) if value), None),
+            False,
             []
         )
 
-        if startSignal is not None:
-            for index, signal in enumerate(buySellSignals[startSignal:]):
-                if signal != preSignal:
-                    if close[index] == 0:
-                        continue
-                    if signal:
-                        stocks = cash / close[index]
-                        cash = 0
-                        actions.append({
-                            'date': str(date[index]),
-                            'price': close[index],
-                            'action': 'buy',
-                            'stocks': stocks,
-                            'cash': cash
-                        })
-                    else:
-                        cash = stocks * close[index]
-                        stocks = 0
-                        actions.append({
-                            'date': str(date[index]),
-                            'price': close[index],
-                            'action': 'sell',
-                            'stocks': stocks,
-                            'cash': cash
-                        })
-                    preSignal = signal
-            if preSignal:
-                cash = stocks * close[index]
-                stocks = 0
+        for index, signal in enumerate(buySellSignals):
+            if len(actions) == 0 and signal == False:
+                continue
+            if signal != preSignal:
+                if close[index] == 0:
+                    continue
+                if signal:
+                    stocks = cash / close[index]
+                    cash = 0
+                    actions.append({
+                        'date': str(date[index]),
+                        'price': close[index],
+                        'action': 'buy',
+                        'stocks': stocks,
+                        'cash': cash
+                    })
+                else:
+                    cash = stocks * close[index]
+                    stocks = 0
+                    actions.append({
+                        'date': str(date[index]),
+                        'price': close[index],
+                        'action': 'sell',
+                        'stocks': stocks,
+                        'cash': cash
+                    })
+                preSignal = signal
+        if preSignal:
+            cash = stocks * close[index]
+            stocks = 0
 
         profitPercentage = round(((cash - request.cash) / request.cash) * 100.0, 2)
         self._storeTestData(request, profitPercentage, actions)
