@@ -45,10 +45,11 @@ class AutoTrader:
                 historicalData = self._candlesProvider.getCandles(request)
                 signals = self._calculateSymbolSignals(symbol, historicalData)
 
-                tradeResult = self._bybitAccessor.trade(symbol, signals[-1])
-                self._telegramAccessor.sendMessage(
-                    f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
-                )
+                if signals[-1] != signals[-2]:
+                    tradeResult = self._bybitAccessor.trade(symbol, signals[-1])
+                    self._telegramAccessor.sendMessage(
+                        f"{signals[-1]} action on symbol: {symbol}, Result -> {tradeResult}"
+                    )
             except Exception as e:
                 logging.error(f"An error occurred on AutoTrader with symbol: {symbol} -> {str(e)}", e)
                 self._telegramAccessor.sendMessage(
