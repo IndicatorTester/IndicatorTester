@@ -17,8 +17,10 @@ class AwsUtils:
         response = dynamodb.get_item(
             TableName = constants.AwsConstants.USERS_TABLE.value,
             Key = self._toDynamoItem({"userId": userId})
-        )['Item']
-        return self._fromDynamodbStringItems(response)
+        )
+        if not ('Item' in response):
+            return {"userId": userId}
+        return self._fromDynamodbStringItems(response['Item'])
 
     def updateOrCreateDynamoItem(self, tableName, primaryKey, updateData):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
