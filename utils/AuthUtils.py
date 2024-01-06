@@ -1,6 +1,7 @@
 import hashlib
 import os
 from dotenv import load_dotenv
+import logging
 
 class AuthUtils:
 
@@ -13,8 +14,12 @@ class AuthUtils:
         self._X_INDICATOR_API_KEY = os.getenv("X_INDICATOR_API_KEY");
 
     def hasAccess(self, headers: {}) -> bool:
-        value = headers["x_timestamp"] + self._X_INDICATOR_API_KEY + headers["x_timestamp"]
-        hash = hashlib.sha512(value.encode('utf-8')).hexdigest()
-        return hash == headers["x_auth"]
+        try:
+            value = headers["x_timestamp"] + self._X_INDICATOR_API_KEY + headers["x_timestamp"]
+            hash = hashlib.sha512(value.encode('utf-8')).hexdigest()
+            return hash == headers["x_auth"]
+        except Exception as e:
+            logging.error("Error while checking access", e)
+            return False
 
 authUtils = AuthUtils()
