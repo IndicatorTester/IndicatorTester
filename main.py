@@ -40,6 +40,10 @@ def validateAccess(request: Request):
 async def calculate(request: models.CalculateRequest, Auth: str = Depends(validateAccess)):
     return activities.CalculateActivity.instance().act(request)
 
+@app.get('/user')
+async def user(userId: str, Auth: str = Depends(validateAccess)):
+    return activities.GetUserActivity.instance().act(userId)
+
 @app.put('/user')
 async def user(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
     return activities.UpdateUserActivity.instance().act(request)
