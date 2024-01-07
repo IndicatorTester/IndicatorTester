@@ -5,7 +5,7 @@ from handlers.CalculateHandler import CalculateHandler
 from models.CalculateRequest import CalculateRequest
 import logging
 
-INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=. ]+$'
+INDICATOR_PATTERN = r'^[a-zA-Z0-9,()+\-*/|&<>=.! ]+$'
 
 class CalculateActivity:
 
