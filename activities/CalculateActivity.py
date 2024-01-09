@@ -1,6 +1,7 @@
 import re
 from fastapi import HTTPException
 from errors.DataProviderError import DataProviderError
+from errors.TestError import TestError
 from handlers.CalculateHandler import CalculateHandler
 from models.CalculateRequest import CalculateRequest
 import logging
@@ -38,6 +39,9 @@ class CalculateActivity:
 
         try:
             return self._handler.handle(request)
+        except TestError as te:
+            logging.error(f"TestError while processing /calculate", te)
+            raise HTTPException(status_code = 403, detail = f'{te.message}')
         except DataProviderError as dpe:
             logging.error(f"DataProviderError while processing /calculate", dpe)
             raise HTTPException(status_code = 403, detail = f'Error while loading historical data: {dpe}')

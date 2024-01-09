@@ -1,3 +1,6 @@
+import constants
+from errors.TestError import TestError
+from managers import TestsManager
 from models import IndicatorTestRecord
 from providers.CandlesProvider import CandlesProvider
 from Indicators import *
@@ -13,8 +16,20 @@ class CalculateHandler:
     def __init__(self) -> None:
         self._candlesProvider = CandlesProvider.instance()
         self._awsUtils = AwsUtils.instance()
+        self._testsManager = TestsManager.instance()
 
     def handle(self, request: CalculateRequest):
+        minimumEligibleTest = self._testsManager.getMinimumEligibleTest(request.type, request.interval)
+
+        if minimumEligibleTest is None:
+            raise TestError(f"Test not found for type: [{request.type}], and interval: [{request.interval}]")
+
+        userData = self._awsUtils.getUserData(request.userId)
+        userTest = self._testsManager.getUserEligibleTest(minimumEligibleTest, userData)
+
+        if userTest is None:
+            raise TestError(f"You need test of type {minimumEligibleTest['title']} or higher to be able to run this test")
+
         data = self._candlesProvider.getCandles(request)
         data['Date'] = pd.to_datetime(data['Date'])
         data = data.set_index('Date').loc[request.startDate : request.endDate].reset_index()
@@ -68,7 +83,17 @@ class CalculateHandler:
             stocks = 0
 
         profitPercentage = round(((cash - request.cash) / request.cash) * 100.0, 2)
-        self._storeTestData(request, profitPercentage, actions)
+
+        if userTest["store"]:
+            self._storeTestData(request, profitPercentage, actions)
+
+        self._awsUtils.updateOrCreateDynamoItem(
+            tableName=constants.AwsConstants.USERS_TABLE.value,
+            primaryKey={"userId": request.userId},
+            updateData={
+               userTest["name"]: str(int(userData.get(userTest["name"], "0")) - 1)
+            }
+        )
 
         return {
             'start': str(date.tolist()[0]).split(' ')[0],
