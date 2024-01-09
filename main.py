@@ -71,6 +71,13 @@ async def testActions(userId: str, timestamp: str, Auth: str = Depends(validateA
 async def sendFeedback(request: models.SendFeedbackRequest, Auth: str = Depends(validateAccess)):
     return activities.SendFeedbackActivity.instance().act(request)
 
+@app.get('/payment')
+async def payment(userId: str, priceId: str, Auth: str = Depends(validateAccess)):
+    return activities.UserPaymentActivity.instance().act(
+        userId=userId,
+        priceId=priceId
+    )
+
 TOOLS_ACCESS_KEY = '7654a285-b65e-4577-aeac-cc720a30ca37'
 
 @app.get('/ultimateCalculator')

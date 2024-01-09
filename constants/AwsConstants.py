@@ -3,6 +3,7 @@ from enum import Enum
 class AwsConstants(Enum):
     DYNAMO_DB = 'dynamodb'
     USERS_TABLE = 'Users'
+    PRICES_TABLE = 'Prices'
     PRE_ORDERS_TABLE = 'PreOrders'
     BYBIT_TABLE = 'ByBitAssets'
     INDICATOR_TESTS_TABLE = 'IndicatorTests'

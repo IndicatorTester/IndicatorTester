@@ -39,6 +39,14 @@ class AwsUtils:
         )
         return response
 
+    def getPriceData(self, priceId: str):
+        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
+        response = dynamodb.get_item(
+            TableName = constants.AwsConstants.PRICES_TABLE.value,
+            Key = self._toDynamoItem({"priceId": priceId})
+        )
+        return self._fromDynamodbStringItems(response['Item'])
+
     def addPreOrder(self, ip: str, email: str):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         dynamodb.put_item(
