@@ -47,13 +47,6 @@ class AwsUtils:
         )
         return self._fromDynamodbStringItems(response['Item'])
 
-    def addPreOrder(self, ip: str, email: str):
-        dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
-        dynamodb.put_item(
-            TableName = constants.AwsConstants.PRE_ORDERS_TABLE.value,
-            Item = {"ip": {"S": ip}, "email": {"S": email}}
-        )
-
     def getByBitCoinAsset(self, coin):
         dynamodb = self._awsClient.get_client(constants.AwsConstants.DYNAMO_DB.value)
         response = dynamodb.get_item(

@@ -48,10 +48,6 @@ async def user(userId: str, Auth: str = Depends(validateAccess)):
 async def user(request: models.UpdateUserRequest, Auth: str = Depends(validateAccess)):
     return activities.UpdateUserActivity.instance().act(request)
 
-@app.post('/preOrder')
-async def preOrder(request: models.AddPreOrderRequest, Auth: str = Depends(validateAccess)):
-    return activities.AddPreOrderActivity.instance().act(request)
-
 @app.get('/testArchive')
 async def testArchive(userId: str, timestamp: str, pageNumber: int, Auth: str = Depends(validateAccess)):
     return activities.GetTestArchiveActivity.instance().act(
