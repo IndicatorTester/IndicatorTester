@@ -28,7 +28,7 @@ TESTS = [
     {
         "title": "Diamond",
         "name": "diamondTest",
-        "types": ["stocks", "cryptocurrencies"],
+        "types": ["stocks", "cryptocurrencies", "etf", "indices"],
         "intervals": ["1min", "5min", "15min", "30min", "45min", "1h", "2h", "4h", "1day", "1week", "1month"],
         "level": 4,
         "store": True
