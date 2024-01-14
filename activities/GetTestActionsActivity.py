@@ -20,7 +20,7 @@ class GetTestActionsActivity:
         try:
             return self._handler.handle(userId, timestamp)
         except Exception as e:
-            logging.error(f"Exception while processing /testActions", e)
+            logging.error(f"Exception while processing /testActions for user id: [{userId}]", e)
             raise HTTPException(status_code = 500, detail = 'Something went wrong')
 
 getTestActionsActivity = GetTestActionsActivity()

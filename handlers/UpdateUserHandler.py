@@ -8,7 +8,7 @@ class UpdateUserHandler:
     def instance():
         return updateUserHandler
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._awsUtils = AwsUtils.instance()
 
     def handle(self, request: UpdateUserRequest):

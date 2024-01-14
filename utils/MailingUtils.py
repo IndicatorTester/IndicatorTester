@@ -10,6 +10,9 @@ class MailingUtils:
     def instance():
         return mailingUtils
 
+    def __init__(self) -> None:
+        pass
+
     def sendUltimateCalculatorReport(cls, symbolSignalsDict):
         message = MIMEMultipart()
         message['From'] = constants.MailingConstants.SENDER_EMAIL.value

@@ -24,4 +24,4 @@ class TelegramAccessor:
             else:
                 logging.warn(f"Failed to send message with Telegram. Error: {response.text}")
         except Exception as e:
-            logging.error(f"An error occurred while sending message with Telegram: {str(e)}")
+            logging.error(f"An error occurred while sending message with Telegram", e)

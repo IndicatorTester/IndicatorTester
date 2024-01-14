@@ -1,0 +1,6 @@
+1. Move validations from Activity classes to model classes.
+2. Clean mailing utils.
+3. use init file with errors package.
+4. use init file with handlers package.
+5. User Model within tests manager instead of raw json.
+6. 

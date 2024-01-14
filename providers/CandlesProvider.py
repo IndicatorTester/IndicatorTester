@@ -1,7 +1,6 @@
 import pandas as pd
 from errors.DataProviderError import DataProviderError
 from models import CalculateRequest
-import utils
 import requests
 import json
 
@@ -11,8 +10,8 @@ class CandlesProvider:
     def instance():
         return candlesProvider
 
-    def __init__(self, awsUtils: utils.AwsUtils) -> None:
-        self._awsUtils = awsUtils
+    def __init__(self) -> None:
+        pass
 
     def getCandles(self, request: CalculateRequest) -> pd.DataFrame:
         response = requests.get("https://api.twelvedata.com/time_series?" \
@@ -28,14 +27,16 @@ class CandlesProvider:
         if data['status'] != 'ok':
             raise DataProviderError(f"Data provider error: {data['message']}")
 
-        if data['values'] == None:
+        if data['values'] is None:
             raise DataProviderError(f"Historical data not found")
 
-        df = pd.json_normalize(data['values'])
+        return self._formatData(pd.json_normalize(data['values']))
+
+    def _formatData(self, df: pd.DataFrame):
         df = df.rename(columns={'datetime': 'Date', 'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close'})
         columns_to_float = ['Open', 'High', 'Low', 'Close']
         df[columns_to_float] = df[columns_to_float].astype(float)
         result_df = df.iloc[::-1].reset_index(drop=True)[['Date'] + columns_to_float]
         return result_df
 
-candlesProvider = CandlesProvider(utils.AwsUtils.instance())
+candlesProvider = CandlesProvider()

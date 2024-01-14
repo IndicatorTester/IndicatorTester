@@ -12,6 +12,9 @@ class GetUserActivity:
         self._handler = GetUserHandler.instance()
 
     def act(self, userId):
+        if userId is None:
+            raise HTTPException(status_code = 403, detail = 'User Id can\'t be null')
+
         try:
             return self._handler.handle(userId)
         except Exception as e:

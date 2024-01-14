@@ -16,7 +16,7 @@ class UserPaymentActivity:
             logging.info(f"Successful payment from user: [{userId}], for price: [{priceId}]")
             return self._handler.handle(userId, priceId)
         except Exception as e:
-            logging.error(f"Exception while handling payment for user id: [{userId}]", e)
+            logging.error(f"Exception while handling payment for user id: [{userId}], and price: [{priceId}]", e)
             raise HTTPException(status_code = 500, detail = "Something went wrong")
 
 userPaymentActivity = UserPaymentActivity()

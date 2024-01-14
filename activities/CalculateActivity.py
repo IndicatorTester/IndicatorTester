@@ -40,6 +40,10 @@ class CalculateActivity:
             raise HTTPException(status_code = 403, detail = 'Invalid buy indicator')
         if not re.match(INDICATOR_PATTERN, request.sellIndicator):
             raise HTTPException(status_code = 403, detail = 'Invalid sell indicator')
+        if len(request.buyIndicator) > 300:
+            raise HTTPException(status_code = 403, detail = 'Buy indicator is too long')
+        if len(request.sellIndicator) > 300:
+            raise HTTPException(status_code = 403, detail = 'Sell indicator is too long')
 
         try:
             return self._handler.handle(request)

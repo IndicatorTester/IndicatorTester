@@ -16,7 +16,7 @@ class SendFeedbackActivity:
         try:
             self._handler.handle(request)
         except Exception as e:
-            logging.error(f"Exception while adding per order for email: [{request.email}], error: {e}")
+            logging.error(f"Exception while processing feedback with email: [{request.email}]", e)
             raise HTTPException(status_code = 500, detail = "Something went wrong")
 
 sendFeedbackActivity = SendFeedbackActivity()
