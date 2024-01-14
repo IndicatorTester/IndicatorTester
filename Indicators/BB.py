@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Bollinger Bands lower band
-def bold(data: pd.DataFrame):
+def boll(data: pd.DataFrame):
     WINDOW = 20
     SMA = data.rolling(window = WINDOW).mean()
     SD = data.rolling(window = WINDOW).std()
