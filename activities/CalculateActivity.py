@@ -30,12 +30,16 @@ class CalculateActivity:
             raise HTTPException(status_code = 403, detail = 'Interval can\'t be null')
         if request.symbol is None:
             raise HTTPException(status_code = 403, detail = 'Symbol can\'t be null')
-        if request.indicator is None:
-            raise HTTPException(status_code = 403, detail = 'Indicator can\'t be null')
+        if request.buyIndicator is None:
+            raise HTTPException(status_code = 403, detail = 'Buy indicator can\'t be null')
+        if request.sellIndicator is None:
+            raise HTTPException(status_code = 403, detail = 'Sell indicator can\'t be null')
         if request.cash is None or request.cash <= 0:
             raise HTTPException(status_code = 403, detail = 'Cash must be a positive number')
-        if not re.match(INDICATOR_PATTERN, request.indicator):
-            raise HTTPException(status_code = 403, detail = 'Invalid indicator')
+        if not re.match(INDICATOR_PATTERN, request.buyIndicator):
+            raise HTTPException(status_code = 403, detail = 'Invalid buy indicator')
+        if not re.match(INDICATOR_PATTERN, request.sellIndicator):
+            raise HTTPException(status_code = 403, detail = 'Invalid sell indicator')
 
         try:
             return self._handler.handle(request)

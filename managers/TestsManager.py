@@ -51,7 +51,6 @@ class TestsManager:
         return None
 
     def getUserEligibleTest(self, minimumEligibleTest, userData):
-        print(userData)
         for test in TESTS:
             if int(userData.get(test["name"], 0)) > 1 and test["level"] >= minimumEligibleTest["level"]:
                 return test

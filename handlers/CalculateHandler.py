@@ -42,43 +42,40 @@ class CalculateHandler:
             data['Close']
         )
 
-        buySellSignals = eval(request.indicator)
+        buyIndicatorSignals = eval(request.buyIndicator)
+        sellIndicatorSignals = eval(request.sellIndicator)
 
-        (cash, stocks, preSignal, actions) = (
+        (cash, stocks, actions) = (
             request.cash,
             0,
-            False,
             []
         )
 
-        for index, signal in enumerate(buySellSignals):
-            if len(actions) == 0 and signal == False:
+        for index in range(len(buyIndicatorSignals)):
+            if close[index] == 0 or buyIndicatorSignals[index] == sellIndicatorSignals[index]:
                 continue
-            if signal != preSignal:
-                if close[index] == 0:
-                    continue
-                if signal:
-                    stocks = cash / close[index]
-                    cash = 0
-                    actions.append({
-                        'date': str(date[index]),
-                        'price': close[index],
-                        'action': 'buy',
-                        'stocks': stocks,
-                        'cash': cash
-                    })
-                else:
-                    cash = stocks * close[index]
-                    stocks = 0
-                    actions.append({
-                        'date': str(date[index]),
-                        'price': close[index],
-                        'action': 'sell',
-                        'stocks': stocks,
-                        'cash': cash
-                    })
-                preSignal = signal
-        if preSignal:
+            if buyIndicatorSignals[index] and cash != 0:
+                stocks = cash / close[index]
+                cash = 0
+                actions.append({
+                    'date': str(date[index]),
+                    'price': close[index],
+                    'action': 'buy',
+                    'stocks': stocks,
+                    'cash': cash
+                })
+            if sellIndicatorSignals[index] and cash == 0:
+                cash = stocks * close[index]
+                stocks = 0
+                actions.append({
+                    'date': str(date[index]),
+                    'price': close[index],
+                    'action': 'sell',
+                    'stocks': stocks,
+                    'cash': cash
+                })
+
+        if cash == 0:
             cash = stocks * close[index]
             stocks = 0
 
@@ -110,7 +107,8 @@ class CalculateHandler:
             userId=request.userId,
             timestamp=request.timestamp,
             symbol=request.symbol,
-            indicator=request.indicator,
+            buyIndicator=request.buyIndicator,
+            sellIndicator=request.sellIndicator,
             interval=request.interval,
             startDate=request.startDate,
             endDate=request.endDate,
