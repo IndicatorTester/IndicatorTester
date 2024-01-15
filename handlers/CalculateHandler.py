@@ -99,6 +99,7 @@ class CalculateHandler:
             'actions': actions,
             'profit': cash - request.cash,
             'profitPercentage': profitPercentage,
+            'symbol': request.symbol,
             'success': True
         }
 
