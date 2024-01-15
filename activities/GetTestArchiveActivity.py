@@ -16,7 +16,7 @@ class GetTestArchiveActivity:
             raise HTTPException(status_code = 403, detail = 'Invalid timestamp value')
         if userId is None:
             raise HTTPException(status_code = 403, detail = 'User Id can\'t be null')
-        if (not pageNumber.isdigit()) or pageNumber < 1:
+        if pageNumber is None or pageNumber < 1:
             raise HTTPException(status_code = 403, detail = 'Page number must be positive number')
 
         try:
